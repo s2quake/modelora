@@ -1,0 +1,5 @@
+[files]
+extend-exclude = [
+    "**/words.txt",
+    "README.md"
+]

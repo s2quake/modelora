@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\JSSoft.Modelora\JSSoft.Modelora.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JSSoft.Randora" Version="1.0.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.28.2" />
+  </ItemGroup>
+
+</Project>

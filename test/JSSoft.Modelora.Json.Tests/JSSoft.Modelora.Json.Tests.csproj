@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\JSSoft.Modelora.Json\JSSoft.Modelora.Json.csproj" />
+    <ProjectReference Include="..\JSSoft.Modelora.Tests\JSSoft.Modelora.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

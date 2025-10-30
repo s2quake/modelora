@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);SA1012</NoWarn>
+    <DefineConstants>$(DefineConstants);MODEL_JSON</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JSSoft.Modelora\JSSoft.Modelora.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Condition="'$(TargetFramework)'=='netstandard2.1'" Include="System.Text.Json" Version="9.0.10" />
+  </ItemGroup>
+
+</Project>
