@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);SA1012;NU5128</NoWarn>
-    <TargetFrameworks Condition="'$(_IsPacking)'=='true'">netstandard2.1</TargetFrameworks>
-    <TargetFramework Condition="'$(_IsPacking)'!='true'">netstandard2.1</TargetFramework>
+    <TargetFrameworks Condition="'$(_IsPacking)'=='true'">netstandard2.0</TargetFrameworks>
+    <TargetFramework Condition="'$(_IsPacking)'!='true'">netstandard2.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
