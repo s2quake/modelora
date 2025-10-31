@@ -1,7 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.1'">
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  <ItemGroup>
+    <PackageReference Condition="'$(TargetFramework)'=='netstandard2.1'" 
+      Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JSSoft.Modelora.Analyzers\JSSoft.Modelora.Analyzers.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
 
 </Project>

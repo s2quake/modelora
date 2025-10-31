@@ -24,15 +24,15 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     <FileVersion>1.0.0</FileVersion>
     <Version>$(FileVersion)</Version>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/s2quake/randora</RepositoryUrl>
-    <LicenseUrl>https://github.com/s2quake/randora/blob/main/LICENSE</LicenseUrl>
+    <RepositoryUrl>https://github.com/s2quake/modelora</RepositoryUrl>
+    <LicenseUrl>https://github.com/s2quake/modelora/blob/main/LICENSE</LicenseUrl>
     <Copyright>Copyright (c) 2025 Jeesu Choi</Copyright>
     <Description>Lightweight random data generator utilities for .NET. Generate primitives, collections, tuples, enums, text, time values, shuffle, and more—handy for tests, seeding, and demos.</Description>
     <Authors>s2quake</Authors>
     <PackageVersion Condition="'$(VersionSuffix)'==''">$(FileVersion)</PackageVersion>
     <PackageVersion Condition="'$(VersionSuffix)'!=''">$(FileVersion)-$(VersionSuffix)</PackageVersion>
     <Version>$(PackageVersion)</Version>
-    <PackageProjectUrl>https://github.com/s2quake/randora</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/s2quake/modelora</PackageProjectUrl>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>library, csharp, dotnet, random, collections, immutable-collections, random-data-generation, tuple, random-data</PackageTags>
@@ -56,9 +56,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Condition="'$(TargetFramework)'=='netstandard2.1'"
-      Include="System.Collections.Immutable" Version="9.0.*" />
-    <PackageReference Condition="'$(TargetFramework)'=='net6.0' or '$(TargetFramework)'=='net7.0'"
+    <PackageReference Condition="'$(TargetFramework)'=='netstandard2.1' or '$(TargetFramework)'=='net6.0' or '$(TargetFramework)'=='net7.0'"
       Include="System.Collections.Immutable" Version="8.0.*" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
       <PrivateAssets>all</PrivateAssets>

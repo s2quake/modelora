@@ -2,11 +2,16 @@
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);SA1012</NoWarn>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks Condition="'$(_IsPacking)'=='true'">netstandard2.1</TargetFrameworks>
+    <TargetFramework Condition="'$(_IsPacking)'!='true'">netstandard2.1</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
     <DefineConstants>$(DefineConstants);SERIALIZATION_ANALYSIS</DefineConstants>
+    
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
 
   <ItemGroup>

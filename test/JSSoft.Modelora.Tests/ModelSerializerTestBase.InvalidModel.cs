@@ -297,7 +297,7 @@ namespace JSSoft.Modelora.Tests
         {
         }
 
-        public InvalidModel_SkippedHistoryVersion(Version2 verion2)
+        public InvalidModel_SkippedHistoryVersion(Version2 version2)
         {
         }
 
@@ -313,7 +313,7 @@ namespace JSSoft.Modelora.Tests
             {
             }
 
-            public Version2(Version1 verion1)
+            public Version2(Version1 version1)
             {
             }
         }
@@ -356,7 +356,7 @@ namespace JSSoft.Modelora.Tests
             {
             }
 
-            public Version1(Version1 verion1)
+            public Version1(Version1 version1)
             {
             }
         }

@@ -1,5 +1,11 @@
+[default]
+extend-ignore-identifiers-re = [
+    "0x7Ful"
+]
+
 [files]
 extend-exclude = [
     "**/words.txt",
-    "README.md"
+    "README.md",
+    "src/JSSoft.Modelora/TypeUtility.cs"
 ]
