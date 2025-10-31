@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);SA1012</NoWarn>
+    <NoWarn>$(NoWarn);SA1012;NU5128</NoWarn>
     <TargetFrameworks Condition="'$(_IsPacking)'=='true'">netstandard2.1</TargetFrameworks>
     <TargetFramework Condition="'$(_IsPacking)'!='true'">netstandard2.1</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>

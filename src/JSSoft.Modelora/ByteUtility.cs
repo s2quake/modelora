@@ -32,6 +32,8 @@ public static class ByteUtility
         return bytes;
     }
 
+    public static string Hex(in ImmutableArray<byte> bytes) => Hex(bytes.AsSpan());
+
     public static string Hex(ReadOnlySpan<byte> bytes)
     {
 #if NETSTANDARD2_1_OR_GREATER
