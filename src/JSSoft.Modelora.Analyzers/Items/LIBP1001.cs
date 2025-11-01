@@ -23,16 +23,22 @@ internal sealed class LIBP1001 : ItemBase
                     IsPartial: ((TypeDeclarationSyntax)ctx.Node).Modifiers.Any(SyntaxKind.PartialKeyword),
                     ctx.SemanticModel));
 
-        context.RegisterSourceOutput(modelClasses, (spc, classInfo) =>
+        context.RegisterSourceOutput(modelClasses, static (spc, classInfo) =>
         {
             var declaration = classInfo.Declaration;
             var semanticModel = classInfo.SemanticModel;
+
             if (!IsModelObject(declaration, semanticModel))
             {
                 return;
             }
 
             if (!ContainsEnumerableProperty(declaration, semanticModel))
+            {
+                return;
+            }
+
+            if (IsEquatableMethodDefined(declaration) && IsGetHashCodeMethodDefined(declaration))
             {
                 return;
             }
