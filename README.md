@@ -2,6 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/JSSoft.Modelora.svg?label=release)](https://www.nuget.org/packages/JSSoft.Modelora/)
 [![NuGet (prerelease)](https://img.shields.io/nuget/vpre/JSSoft.Modelora.svg?label=preview)](https://www.nuget.org/packages/JSSoft.Modelora/)
+[![codecov](https://codecov.io/gh/s2quake/modelora/branch/main/graph/badge.svg)](https://codecov.io/gh/s2quake/modelora)
 [![License](https://img.shields.io/github/license/s2quake/modelora.svg)](https://github.com/s2quake/modelora/blob/main/LICENSE.md)
 
 A high-performance model serialization and conversion library for .NET. Efficiently serialize and deserialize complex object models to binary, JSON, and YAML formats.

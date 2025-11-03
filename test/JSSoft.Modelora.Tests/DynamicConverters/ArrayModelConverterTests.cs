@@ -47,7 +47,7 @@ public sealed class ArrayModelConverterTests
         var converter = ModelResolver.GetConverter(typeof(int[]));
         var propertyInfo = converter.GetType().GetProperty("GenericTypeDefinition", bindingFlags)!;
         var e = Assert.Throws<TargetInvocationException>(() => propertyInfo.GetValue(converter));
-        Assert.IsType<UnreachableException>(e.InnerException);
+        Assert.Equal("UnreachableException", e.InnerException?.GetType().Name);
     }
 
     [Fact]
