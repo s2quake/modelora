@@ -1,0 +1,14 @@
+codecov:
+  require_ci_to_pass: yes
+
+coverage:
+  status:
+    project:
+      default:
+        # Allow tiny fluctuations without failing checks
+        threshold: 1%
+
+# Exclude paths from Codecov's overall coverage calculation
+ignore:
+  - "test/**"
+  - "src/JSSoft.Modelora.Analyzers/**"
