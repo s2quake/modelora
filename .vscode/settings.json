@@ -19,5 +19,5 @@
     },
     "editor.codeLens": false,
     "dotnet.defaultSolution": "modelora.sln",
-    "csharp.debug.justMyCode": false
+    "csharp.debug.justMyCode": true
 }

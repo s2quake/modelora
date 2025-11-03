@@ -48,9 +48,9 @@ public static class ModelSerializer
             return;
         }
 
+        var data = new ModelData(type);
         if (!ModelTypeScope.CanOmitTypeInfo(type, options))
         {
-            var data = new ModelData(type);
             writer.Write((byte)DataType.Header);
             data.Write(writer);
         }

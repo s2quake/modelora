@@ -1,12 +1,15 @@
 name: Pack
 
 on:
-  pull_request: 
+  pull_request:
   push:
     branches:
       - main
     tags:
       - "*"
+
+permissions:
+  contents: write
 
 jobs:
   pack:

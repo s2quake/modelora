@@ -14,16 +14,21 @@ public static class BinaryReaderExtensions
 
     public static object ReadEnum(this BinaryReader @this, Type enumType)
     {
-        var isLong = @this.ReadByte() == 1;
-        var bytes = new byte[isLong ? sizeof(long) : sizeof(int)];
-        if (@this.Read(bytes, 0, bytes.Length) != bytes.Length)
+        var type = @this.ReadByte();
+        if (type is 1)
         {
-            throw new EndOfStreamException("Failed to read enum from stream.");
+            var value = ReadZigZagEncodedInt64(@this);
+            return Enum.ToObject(enumType, value);
         }
-
-        return isLong
-            ? Enum.ToObject(enumType, BitConverter.ToInt64(bytes))
-            : Enum.ToObject(enumType, BitConverter.ToInt32(bytes));
+        else if (type is 0)
+        {
+            var value = ReadZigZagEncodedInt32(@this);
+            return Enum.ToObject(enumType, value);
+        }
+        else
+        {
+            throw new FormatException("Invalid enum type prefix.");
+        }
     }
 
     public static int ReadZigZagEncodedInt32(this BinaryReader @this)

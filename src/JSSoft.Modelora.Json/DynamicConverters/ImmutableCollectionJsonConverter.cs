@@ -14,7 +14,7 @@ internal abstract class ImmutableCollectionJsonConverter : CollectionJsonConvert
 
     protected override IEnumerable CreateInstance(Type typeToConvert, Type elementType, IList listInstance)
     {
-        var methodInfo = GetCreateRangeMethod(ImmutableStaticType, typeof(IEnumerable<>));
+        var methodInfo = GetCreateRangeMethod(ImmutableStaticType, IsDictionary);
         var genericMethodInfo = IsDictionary
             ? methodInfo.MakeGenericMethod(elementType.GetGenericArguments())
             : methodInfo.MakeGenericMethod(elementType);
@@ -22,41 +22,33 @@ internal abstract class ImmutableCollectionJsonConverter : CollectionJsonConvert
         return (IEnumerable)genericMethodInfo.Invoke(null, parameters: methodArgs)!;
     }
 
-    private static MethodInfo GetCreateRangeMethod(Type type, Type parameterType)
+    private static MethodInfo GetCreateRangeMethod(Type type, bool isDictionary)
     {
         var bindingFlags = BindingFlags.Public | BindingFlags.Static;
-        var methodInfos = type.GetMethods(bindingFlags);
 
-        for (var i = 0; i < methodInfos.Length; i++)
+        if (isDictionary)
         {
-            var methodInfo = methodInfos[i];
-            if (IsCreateRangeMethod(methodInfo, parameterType))
+            var tKey = Type.MakeGenericMethodParameter(0);
+            var tValue = Type.MakeGenericMethodParameter(1);
+            var kvpType = typeof(KeyValuePair<,>).MakeGenericType(tKey, tValue);
+            var paramType = typeof(IEnumerable<>).MakeGenericType(kvpType);
+            var mi = type.GetMethod("CreateRange", bindingFlags, binder: null, types: new[] { paramType }, modifiers: null);
+            if (mi is not null)
             {
-                return methodInfo;
+                return mi;
+            }
+        }
+        else
+        {
+            var t = Type.MakeGenericMethodParameter(0);
+            var paramType = typeof(IEnumerable<>).MakeGenericType(t);
+            var mi = type.GetMethod("CreateRange", bindingFlags, binder: null, types: new[] { paramType }, modifiers: null);
+            if (mi is not null)
+            {
+                return mi;
             }
         }
 
         throw new NotSupportedException("The method is not found.");
-    }
-
-    private static bool IsCreateRangeMethod(MethodInfo methodInfo, Type parameterType)
-    {
-        var parameters = methodInfo.GetParameters();
-        if (methodInfo.Name is not "CreateRange")
-        {
-            return false;
-        }
-
-        if (parameters.Length is not 1)
-        {
-            return false;
-        }
-
-        if (parameters[0].ParameterType.Name != parameterType.Name)
-        {
-            return false;
-        }
-
-        return true;
     }
 }

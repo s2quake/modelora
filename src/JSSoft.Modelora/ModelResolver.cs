@@ -87,25 +87,17 @@ public static class ModelResolver
 
     public static int GetVersion(Type type)
     {
-        try
+        if (type.IsDefined(typeof(ModelAttribute)) || type.IsDefined(typeof(OriginModelAttribute)))
         {
-            if (type.IsDefined(typeof(ModelAttribute)) || type.IsDefined(typeof(OriginModelAttribute)))
-            {
-                return GetTypes(type).IndexOf(type) + 1;
-            }
-            else if (TypeUtility.IsKnownType(type))
-            {
-                return 0;
-            }
+            return GetTypes(type).IndexOf(type) + 1;
+        }
+        else if (TypeUtility.IsKnownType(type))
+        {
+            return 0;
+        }
 
-            var message = $"Type '{type}' is not supported or not registered in known types.";
-            throw new InvalidModelException(message, type);
-        }
-        catch (Exception e) when (e is not ModelException)
-        {
-            var message = $"Type '{type}' is not supported or not registered in known types.";
-            throw new InvalidModelException(message, type, e);
-        }
+        var message = $"Type '{type}' is not supported or not registered in known types.";
+        throw new InvalidModelException(message, type);
     }
 
     public static ModelPropertyCollection GetProperties(Type type)
@@ -125,7 +117,16 @@ public static class ModelResolver
         }
     }
 
-    public static IModelConverter GetConverter(Type type) => _converterByType.GetOrAdd(type, CreateConverter);
+    public static IModelConverter GetConverter(Type type)
+    {
+        if (TryGetConverter(type, out var converter))
+        {
+            return converter;
+        }
+
+        var message = $"Type '{type}' is not supported or not registered in known types.";
+        throw new InvalidModelException(message, type);
+    }
 
     public static bool TryGetConverter(Type type, [MaybeNullWhen(false)] out IModelConverter converter)
     {
@@ -150,7 +151,7 @@ public static class ModelResolver
 
             if (type.IsDefined(typeof(ModelConverterAttribute)))
             {
-                return GetConverter(type);
+                return _converterByType.GetOrAdd(type, CreateConverter);
             }
 
             converter = _converters.FirstOrDefault(converter => converter.CanConvert(type));
@@ -163,8 +164,6 @@ public static class ModelResolver
             return null;
         }
     }
-
-    public static void AddConverter(Type type, IModelConverter converter) => _converterByType.TryAdd(type, converter);
 
     public static bool Equals<T>(T left, T? right) => Equals(left, right, typeof(T));
 
@@ -299,6 +298,14 @@ public static class ModelResolver
 
     private static IModelConverter CreateConverter(Type type)
     {
+        if (Nullable.GetUnderlyingType(type) is { } underlyingType)
+        {
+            throw new ArgumentException(
+                $"Cannot create converter for nullable type '{type}'. " +
+                $"Use the underlying type '{underlyingType}' instead.",
+                nameof(type));
+        }
+
         if (type.GetCustomAttribute<ModelConverterAttribute>() is not { } attribute)
         {
             throw new ArgumentException(
@@ -309,21 +316,11 @@ public static class ModelResolver
         var constructorWithType = converterType.GetConstructor([typeof(Type)]);
         if (constructorWithType is not null)
         {
-            if (constructorWithType.Invoke([type]) is not IModelConverter converter)
-            {
-                throw new UnreachableException($"Cannot create converter for {type} using {converterType}");
-            }
-
-            return converter;
+            return (IModelConverter)constructorWithType.Invoke([type])!;
         }
         else
         {
-            if (Activator.CreateInstance(converterType) is not IModelConverter converter)
-            {
-                throw new UnreachableException($"Cannot create converter for {type} using {converterType}");
-            }
-
-            return converter;
+            return (IModelConverter)Activator.CreateInstance(converterType)!;
         }
     }
 }

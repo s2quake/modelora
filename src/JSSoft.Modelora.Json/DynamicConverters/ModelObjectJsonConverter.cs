@@ -95,6 +95,7 @@ internal sealed class ModelObjectJsonConverter : JsonConverter<object>
         {
             var property = properties[i];
             var propertyType = property.PropertyType;
+            _ = ModelResolver.GetTypeInfo(propertyType);
             if (property.InspectOnly && modelOptions.Purpose is SerializationPurpose.Contract)
             {
                 continue;
@@ -109,7 +110,7 @@ internal sealed class ModelObjectJsonConverter : JsonConverter<object>
             }
 
             var propertyActualType = TypeUtility.GetActualType(propertyValue, propertyType);
-            using var _ = ModelTypeScope.Push(propertyType);
+            using var _1 = ModelTypeScope.Push(propertyType);
             writer.WritePropertyName(property.Name);
             JsonSerializer.Serialize(writer, propertyValue, propertyActualType, options);
         }

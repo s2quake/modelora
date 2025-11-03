@@ -99,6 +99,7 @@ internal sealed class ModelObjectYamlTypeConverter : IYamlTypeConverter
         {
             var property = properties[i];
             var propertyType = property.PropertyType;
+            _ = ModelResolver.GetTypeInfo(propertyType);
             if (property.InspectOnly && modelOptions.Purpose is SerializationPurpose.Contract)
             {
                 continue;
@@ -113,7 +114,7 @@ internal sealed class ModelObjectYamlTypeConverter : IYamlTypeConverter
             }
 
             var propertyActualType = TypeUtility.GetActualType(propertyValue, propertyType);
-            using var _ = ModelTypeScope.Push(propertyType);
+            using var _1 = ModelTypeScope.Push(propertyType);
             emitter.WritePropertyName(property.Name);
             serializer(propertyValue, propertyActualType);
         }

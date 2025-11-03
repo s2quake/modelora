@@ -17,15 +17,13 @@ public static class BinaryWriterExtensions
         var underlyingType = Enum.GetUnderlyingType(enumType);
         if (underlyingType == typeof(long))
         {
-            var bytes = BitConverter.GetBytes(Convert.ToInt64(value));
             @this.Write((byte)1);
-            @this.Write(bytes, 0, bytes.Length);
+            WriteZigZagEncodedInt64(@this, Convert.ToInt64(value));
         }
         else
         {
-            var bytes = BitConverter.GetBytes(Convert.ToInt32(value));
             @this.Write((byte)0);
-            @this.Write(bytes, 0, bytes.Length);
+            WriteZigZagEncodedInt32(@this, Convert.ToInt32(value));
         }
     }
 

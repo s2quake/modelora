@@ -25,7 +25,7 @@ public sealed class NotDefaultAttributeTest
         var obj1 = new TestClass
         {
             Value1 = 1,
-            Value2 = HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
+            Value2 = HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
             Value3 = [1, 2, 3],
         };
         ModelAssert.DoseNotThrow(obj1);
@@ -63,7 +63,7 @@ public sealed class NotDefaultAttributeTest
         public int Value1 { get; init; }
 
         [NotDefault]
-        public HexValue Value2 { get; init; }
+        public HexScalarValue Value2 { get; init; }
 
         [NotDefault]
         public ImmutableArray<int> Value3 { get; init; }

@@ -94,6 +94,7 @@ public readonly struct ObjectStruct : IEquatable<ObjectStruct>
         DateTimeOffset = DateTimeOffset(random);
         TimeSpan = TimeSpan(random);
         Byte = Byte(random);
+        Enum64 = Enum<TestEnum64>(random);
     }
 
     [Property(0)]
@@ -123,6 +124,9 @@ public readonly struct ObjectStruct : IEquatable<ObjectStruct>
     [Property(8)]
     public byte Byte { get; init; }
 
+    [Property(9)]
+    public TestEnum64 Enum64 { get; init; }
+
     public static bool operator ==(ObjectStruct left, ObjectStruct right) => left.Equals(right);
 
     public static bool operator !=(ObjectStruct left, ObjectStruct right) => !(left == right);
@@ -151,6 +155,7 @@ public readonly struct ArrayStruct : IEquatable<ArrayStruct>
         Strings = Array(random, String);
         DateTimeOffsets = Array(random, DateTimeOffset);
         TimeSpans = Array(random, TimeSpan);
+        Enum64s = Array(random, Enum<TestEnum64>);
     }
 
     [Property(0)]
@@ -176,6 +181,9 @@ public readonly struct ArrayStruct : IEquatable<ArrayStruct>
 
     [Property(7)]
     public TimeSpan[] TimeSpans { get; init; } = [];
+
+    [Property(8)]
+    public TestEnum64[] Enum64s { get; init; } = [];
 
     public static bool operator ==(ArrayStruct left, ArrayStruct right) => left.Equals(right);
 

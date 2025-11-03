@@ -94,6 +94,7 @@ public sealed record class ObjectRecordClass : IEquatable<ObjectRecordClass>
         DateTimeOffset = DateTimeOffset(random);
         TimeSpan = TimeSpan(random);
         Byte = Byte(random);
+        Enum64 = Enum<TestEnum64>(random);
     }
 
     [Property(0)]
@@ -123,6 +124,9 @@ public sealed record class ObjectRecordClass : IEquatable<ObjectRecordClass>
     [Property(8)]
     public byte Byte { get; init; }
 
+    [Property(9)]
+    public TestEnum64 Enum64 { get; init; }
+
     public bool Equals(ObjectRecordClass? other) => ModelResolver.Equals(this, other);
 
     public override int GetHashCode() => ModelResolver.GetHashCode(this);
@@ -145,6 +149,7 @@ public sealed record class ArrayRecordClass : IEquatable<ArrayRecordClass>
         Strings = Array(random, String);
         DateTimeOffsets = Array(random, DateTimeOffset);
         TimeSpans = Array(random, TimeSpan);
+        Enum64s = Array(random, Enum<TestEnum64>);
     }
 
     [Property(0)]
@@ -170,6 +175,9 @@ public sealed record class ArrayRecordClass : IEquatable<ArrayRecordClass>
 
     [Property(7)]
     public TimeSpan[] TimeSpans { get; init; } = [];
+
+    [Property(8)]
+    public TestEnum64[] Enum64s { get; init; } = [];
 
     public bool Equals(ArrayRecordClass? other) => ModelResolver.Equals(this, other);
 

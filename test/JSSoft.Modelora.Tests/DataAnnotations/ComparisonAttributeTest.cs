@@ -119,8 +119,8 @@ public sealed class ComparisonAttributeTest
         [Test("0", typeof(BigInteger))]
         public BigInteger Value5 { get; set; }
 
-        [Test("a1b2c3d4e5f6789012345678901234567890abcd", typeof(HexValue))]
-        public HexValue Value6 { get; set; } = HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd");
+        [Test("a1b2c3d4e5f6789012345678901234567890abcd", typeof(HexScalarValue))]
+        public HexScalarValue Value6 { get; set; } = HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd");
     }
 
     private sealed class TestClass1_A
