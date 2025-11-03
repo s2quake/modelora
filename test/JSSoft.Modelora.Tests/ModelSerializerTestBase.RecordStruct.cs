@@ -94,6 +94,7 @@ public readonly record struct ObjectRecordStruct : IEquatable<ObjectRecordStruct
         DateTimeOffset = DateTimeOffset(random);
         TimeSpan = TimeSpan(random);
         Byte = Byte(random);
+        Enum64 = Enum<TestEnum64>(random);
     }
 
     [Property(0)]
@@ -123,6 +124,9 @@ public readonly record struct ObjectRecordStruct : IEquatable<ObjectRecordStruct
     [Property(8)]
     public byte Byte { get; init; }
 
+    [Property(9)]
+    public TestEnum64 Enum64 { get; init; }
+
     public bool Equals(ObjectRecordStruct other) => ModelResolver.Equals(this, other);
 
     public override int GetHashCode() => ModelResolver.GetHashCode(this);
@@ -145,6 +149,7 @@ public readonly record struct ArrayRecordStruct : IEquatable<ArrayRecordStruct>
         Strings = Array(random, String);
         DateTimeOffsets = Array(random, DateTimeOffset);
         TimeSpans = Array(random, TimeSpan);
+        Enum64s = Array(random, Enum<TestEnum64>);
     }
 
     [Property(0)]
@@ -170,6 +175,9 @@ public readonly record struct ArrayRecordStruct : IEquatable<ArrayRecordStruct>
 
     [Property(7)]
     public TimeSpan[] TimeSpans { get; init; } = [];
+
+    [Property(8)]
+    public TestEnum64[] Enum64s { get; init; } = [];
 
     public bool Equals(ArrayRecordStruct other) => ModelResolver.Equals(this, other);
 

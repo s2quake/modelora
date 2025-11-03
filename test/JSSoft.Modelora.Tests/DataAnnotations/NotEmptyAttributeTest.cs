@@ -26,9 +26,9 @@ public sealed class NotEmptyAttributeTest
         var obj1 = new TestClass
         {
             Value1 = [1],
-            Value2 = [HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd")],
+            Value2 = [HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd")],
             Value3 = [1, 2, 3],
-            Value4 = [HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd")],
+            Value4 = [HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd")],
             Value5 = Enumerable.Range(1, 3),
             Value6 = new TestArray { Items = [1, 2, 3] },
         };
@@ -71,13 +71,13 @@ public sealed class NotEmptyAttributeTest
         public int[] Value1 { get; init; } = [];
 
         [NotEmpty]
-        public HexValue[] Value2 { get; init; } = [];
+        public HexScalarValue[] Value2 { get; init; } = [];
 
         [NotEmpty]
         public ImmutableArray<int> Value3 { get; init; } = [];
 
         [NotEmpty]
-        public ImmutableList<HexValue> Value4 { get; init; } = [];
+        public ImmutableList<HexScalarValue> Value4 { get; init; } = [];
 
         [NotEmpty]
         public IEnumerable<int> Value5 { get; init; } = Enumerable.Repeat(0, 0);

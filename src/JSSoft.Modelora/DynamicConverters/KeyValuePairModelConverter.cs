@@ -3,7 +3,6 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.Diagnostics;
 using System.IO;
 
 namespace JSSoft.Modelora.DynamicConverters;
@@ -52,11 +51,7 @@ internal sealed class KeyValuePairModelConverter : ModelConverterBase<object>, I
         var values = new object?[_names.Length];
         for (var i = 0; i < _names.Length; i++)
         {
-            if (type.GetProperty(_names[i]) is not { } property)
-            {
-                throw new UnreachableException($"{_names[i]} property not found");
-            }
-
+            var property = type.GetProperty(_names[i])!;
             var propertyType = property.PropertyType;
             using var _ = ModelTypeScope.Push(propertyType);
             values[i] = ModelSerializer.Deserialize(reader, propertyType, options);
@@ -70,11 +65,7 @@ internal sealed class KeyValuePairModelConverter : ModelConverterBase<object>, I
         var type = value.GetType();
         for (var i = 0; i < _names.Length; i++)
         {
-            if (type.GetProperty(_names[i]) is not { } property)
-            {
-                throw new UnreachableException($"{_names[i]} property not found");
-            }
-
+            var property = type.GetProperty(_names[i])!;
             var propertyType = property.PropertyType;
             var propertyValue = property.GetValue(value);
             var propertyActualType = TypeUtility.GetActualType(propertyValue, propertyType);

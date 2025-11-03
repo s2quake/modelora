@@ -40,7 +40,9 @@ public sealed class ValidateAttribute : ValidationAttribute
             return new ValidationResult(compositeMessage, [validationContext.DisplayName]);
         }
 
-        return base.IsValid(value, validationContext);
+        // When the value is null, treat it as valid. Using base.IsValid would throw NotImplementedException
+        // for the (value, ValidationContext) overload in the base ValidationAttribute.
+        return ValidationResult.Success;
     }
 
     private sealed class ServiceProvider(ValidationContext validationContext) : IServiceProvider

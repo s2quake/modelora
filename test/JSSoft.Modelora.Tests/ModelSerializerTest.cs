@@ -76,13 +76,8 @@ public sealed record class NotHasModelConverter
     public int Value { get; init; } = 123;
 }
 
-public sealed class HasModelConverterModelConverter : ModelConverter
+public sealed class HasModelConverterModelConverter(Type type) : ModelConverter(type)
 {
-    public HasModelConverterModelConverter()
-        : base(typeof(HasModelConverter))
-    {
-    }
-
     protected override object Read(BinaryReader reader, Type type, ModelOptions options)
     {
         var length = sizeof(int);

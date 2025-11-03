@@ -49,8 +49,8 @@ public sealed class GreaterThanAttributeTest
     {
         var obj1 = new TestClass1
         {
-            Value1 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
-            Value2 = HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
+            Value1 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value2 = HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
         };
         ModelAssert.DoseNotThrow(obj1);
     }
@@ -92,15 +92,15 @@ public sealed class GreaterThanAttributeTest
     {
         var obj1 = new TestClass1
         {
-            Value1 = HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
-            Value2 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value1 = HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
+            Value2 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
         };
         ModelAssert.Throws(obj1);
 
         var obj2 = new TestClass1
         {
-            Value1 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
-            Value2 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value1 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value2 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
         };
         ModelAssert.Throws(obj2);
     }
@@ -168,6 +168,42 @@ public sealed class GreaterThanAttributeTest
         ModelAssert.ThrowsMany(obj2, propertyNames);
     }
 
+    [Fact]
+    public void Compare_To_HexValue_Throw()
+    {
+        var obj1 = new TestClass3
+        {
+            Value1 = HexScalarValue.Parse("001A2B3C"),
+        };
+        ModelAssert.Throws(obj1);
+
+        var obj2 = new TestClass3
+        {
+            Value1 = HexScalarValue.Parse("1A2B3C"),
+        };
+        ModelAssert.Throws(obj2);
+    }
+
+    [Fact]
+    public void Compare_To_StringScalarValue_Throw()
+    {
+        var obj1 = new TestClass4
+        {
+            Value1 = new StringScalarValue("apple"),
+        };
+        ModelAssert.Throws(obj1);
+    }
+
+    [Fact]
+    public void Compare_To_Int32Value_Throw()
+    {
+        var obj1 = new TestClass5
+        {
+            Value1 = new Int32ScalarValue(0),
+        };
+        ModelAssert.Throws(obj1);
+    }
+
     private sealed record class TestClass1
     {
         [GreaterThan(targetType: null, nameof(Value2))]
@@ -204,5 +240,23 @@ public sealed class GreaterThanAttributeTest
 
         [GreaterThan("B")]
         public string Value9 { get; init; } = string.Empty;
+    }
+
+    private sealed record class TestClass3
+    {
+        [GreaterThan("0x1A2B3C", typeof(HexScalarValue))]
+        public HexScalarValue Value1 { get; init; }
+    }
+
+    private sealed record class TestClass4
+    {
+        [GreaterThan("hello", typeof(StringScalarValue))]
+        public StringScalarValue Value1 { get; init; }
+    }
+
+    private sealed record class TestClass5
+    {
+        [GreaterThan("0x1A2B3C", typeof(Int32ScalarValue))]
+        public Int32ScalarValue Value1 { get; init; }
     }
 }

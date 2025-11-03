@@ -58,6 +58,7 @@ public static class TypeUtility
         _knownTypes.AddType(typeof(ValueTuple<,,,,,>), "vtp<,,,,,>");
         _knownTypes.AddType(typeof(ValueTuple<,,,,,,>), "vtp<,,,,,,>");
         _knownTypes.AddType(typeof(ValueTuple<,,,,,,,>), "vtp<,,,,,,,>");
+        _knownTypes.AddType(typeof(KeyValuePair<,>), "kvp<,>");
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {

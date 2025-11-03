@@ -49,8 +49,8 @@ public sealed class LessThanAttributeTest
     {
         var obj1 = new TestClass1
         {
-            Value1 = HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
-            Value2 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value1 = HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
+            Value2 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
         };
         ModelAssert.DoseNotThrow(obj1);
     }
@@ -92,15 +92,15 @@ public sealed class LessThanAttributeTest
     {
         var obj1 = new TestClass1
         {
-            Value1 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
-            Value2 = HexValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
+            Value1 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value2 = HexScalarValue.Parse("a1b2c3d4e5f6789012345678901234567890abcd"),
         };
         ModelAssert.Throws(obj1);
 
         var obj2 = new TestClass1
         {
-            Value1 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
-            Value2 = HexValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value1 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
+            Value2 = HexScalarValue.Parse("def123456789abcdef0123456789abcdef012345"),
         };
         ModelAssert.Throws(obj2);
     }

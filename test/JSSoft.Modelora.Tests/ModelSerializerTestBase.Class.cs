@@ -95,6 +95,7 @@ public sealed class ObjectClass : IEquatable<ObjectClass>
         DateTimeOffset = DateTimeOffset(random);
         TimeSpan = TimeSpan(random);
         Byte = Byte(random);
+        Enum64 = Enum<TestEnum64>(random);
     }
 
     [Property(0)]
@@ -124,6 +125,9 @@ public sealed class ObjectClass : IEquatable<ObjectClass>
     [Property(8)]
     public byte Byte { get; init; }
 
+    [Property(9)]
+    public TestEnum64 Enum64 { get; init; }
+
     public bool Equals(ObjectClass? other) => ModelResolver.Equals(this, other);
 
     public override bool Equals(object? obj) => Equals(obj as ObjectClass);
@@ -148,6 +152,7 @@ public sealed class ArrayClass : IEquatable<ArrayClass>
         Strings = Array(random, String);
         DateTimeOffsets = Array(random, DateTimeOffset);
         TimeSpans = Array(random, TimeSpan);
+        Enum64s = Array(random, Enum<TestEnum64>);
     }
 
     [Property(0)]
@@ -173,6 +178,9 @@ public sealed class ArrayClass : IEquatable<ArrayClass>
 
     [Property(7)]
     public TimeSpan[] TimeSpans { get; init; } = [];
+
+    [Property(8)]
+    public TestEnum64[] Enum64s { get; init; } = [];
 
     public bool Equals(ArrayClass? other) => ModelResolver.Equals(this, other);
 
