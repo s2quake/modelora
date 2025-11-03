@@ -117,7 +117,16 @@ public static class ModelResolver
         }
     }
 
-    public static IModelConverter GetConverter(Type type) => _converterByType.GetOrAdd(type, CreateConverter);
+    public static IModelConverter GetConverter(Type type)
+    {
+        if (TryGetConverter(type, out var converter))
+        {
+            return converter;
+        }
+
+        var message = $"Type '{type}' is not supported or not registered in known types.";
+        throw new InvalidModelException(message, type);
+    }
 
     public static bool TryGetConverter(Type type, [MaybeNullWhen(false)] out IModelConverter converter)
     {
@@ -142,20 +151,12 @@ public static class ModelResolver
 
             if (type.IsDefined(typeof(ModelConverterAttribute)))
             {
-                return GetConverter(type);
+                return _converterByType.GetOrAdd(type, CreateConverter);
             }
 
             converter = _converters.FirstOrDefault(converter => converter.CanConvert(type));
             if (converter is not null)
             {
-                // Special-case: only expose Nullable converter if the underlying type is also resolvable.
-                if (converter is NullableModelConverter
-                    && Nullable.GetUnderlyingType(type) is { } underlyingType
-                    && !TryGetConverter(underlyingType, out _))
-                {
-                    return null;
-                }
-
                 _converterByType.TryAdd(type, converter);
                 return converter;
             }

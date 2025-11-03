@@ -214,15 +214,6 @@ public sealed class ModelResolverTest
     }
 
     [Fact]
-    public void TryGetConverter_ForNullableUnsupportedType_ReturnsFalse()
-    {
-        var nullableUnsupported = typeof(decimal?);
-        var ok = ModelResolver.TryGetConverter(nullableUnsupported, out var conv);
-        Assert.False(ok);
-        Assert.Null(conv);
-    }
-
-    [Fact]
     public void GetConverter_From_ModelConverterAttribute_Works()
     {
         var converter = ModelResolver.GetConverter(typeof(HasModelConverter));
@@ -230,16 +221,9 @@ public sealed class ModelResolverTest
     }
 
     [Fact]
-    public void GetConverter_NullableType_Throw()
-    {
-        Assert.Throws<ArgumentException>(() => ModelResolver.GetConverter(typeof(HexScalarValue?)));
-    }
-
-    [Fact]
     public void GetConverter_WithoutAttribute_Throws()
     {
-        var e = Assert.Throws<ArgumentException>(() => ModelResolver.GetConverter(typeof(NotHasModelConverter)));
-        Assert.Equal("type", e.ParamName);
+        Assert.Throws<InvalidModelException>(() => ModelResolver.GetConverter(typeof(NotHasModelConverter)));
     }
 
     [Fact]

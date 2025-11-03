@@ -5,7 +5,7 @@
 
 namespace JSSoft.Modelora;
 
-internal interface IModelComparer
+public interface IModelComparer
 {
     bool Equals(object obj1, object obj2, Type type);
 
