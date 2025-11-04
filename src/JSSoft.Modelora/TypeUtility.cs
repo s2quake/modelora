@@ -76,7 +76,13 @@ public static class TypeUtility
         {
             if (args.LoadedAssembly is not null)
             {
-                AddAssembly(args.LoadedAssembly);
+                lock (_lock)
+                {
+                    if (!_addedAssemblies.Contains(args.LoadedAssembly))
+                    {
+                        AddAssembly(args.LoadedAssembly);
+                    }
+                }
             }
         };
     }
