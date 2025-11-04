@@ -47,7 +47,7 @@ public sealed record class Version2_ModelRecord
 
 [ModelHistory(Version = 1, Type = typeof(Version1_ModelRecord))]
 [ModelHistory(Version = 2, Type = typeof(Version2_ModelRecord))]
-[Model("Libplanet_Serialization_Tests_ModelRecord", Version = 3)]
+[Model("JSSoft_Modelora_Tests_ModelRecord", Version = 3)]
 public sealed record class ModelRecord
 {
     public ModelRecord()

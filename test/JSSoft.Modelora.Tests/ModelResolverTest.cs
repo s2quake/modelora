@@ -151,6 +151,7 @@ public sealed class ModelResolverTest
         var message = $"Type '{typeof(NotHasModelConverter)}' is not supported or not registered in known types.";
         var e = Assert.Throws<InvalidModelException>(() => ModelResolver.GetTypeInfo(typeof(NotHasModelConverter)));
         Assert.Equal(message, e.Message);
+        Assert.Equal(typeof(NotHasModelConverter), e.ModelType);
     }
 
     [Fact]
@@ -255,7 +256,7 @@ public sealed class ModelResolverTest
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelResolverTest_Model", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelResolverTest_Model", Version = 1)]
 public sealed record class Model : IEquatable<Model>
 {
     [Property(0)]
@@ -278,7 +279,7 @@ public sealed record class Model : IEquatable<Model>
     public override int GetHashCode() => ModelResolver.GetHashCode(this);
 }
 
-[Model("Libplanet_Serialization_Tests_ModelResolverTests_AnnotatedRecord", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelResolverTests_AnnotatedRecord", Version = 1)]
 public sealed record class AnnotatedRecord
 {
     [Property(0)]

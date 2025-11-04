@@ -65,7 +65,7 @@ public sealed class ModelSerializerTest(ITestOutputHelper output) : ModelSeriali
 
 [ModelConverter(
     typeof(HasModelConverterModelConverter),
-    "Libplanet_Serialization_Tests_ModelSerializerTest_HasModelConverter")]
+    "JSSoft_Modelora_Tests_ModelSerializerTest_HasModelConverter")]
 public sealed record class HasModelConverter
 {
     public int Value { get; init; } = 123;

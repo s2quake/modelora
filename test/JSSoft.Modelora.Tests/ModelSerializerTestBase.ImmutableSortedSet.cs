@@ -49,7 +49,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_RecordClassWithImmutableSortedSet", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_RecordClassWithImmutableSortedSet", Version = 1)]
 public sealed record class RecordClassWithImmutableSortedSet
     : IEquatable<RecordClassWithImmutableSortedSet>
 {

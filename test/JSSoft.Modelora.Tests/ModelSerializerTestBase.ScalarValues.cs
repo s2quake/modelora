@@ -32,7 +32,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_ScalarValuesClass", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_ScalarValuesClass", Version = 1)]
 public sealed class ScalarValuesClass : IEquatable<ScalarValuesClass>
 {
     public ScalarValuesClass()
@@ -95,7 +95,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_UnsupportedHexDBNullClass", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_UnsupportedHexDBNullClass", Version = 1)]
 public sealed class UnsupportedHexDBNullClass : IEquatable<UnsupportedHexDBNullClass>
 {
     public UnsupportedHexDBNullClass()

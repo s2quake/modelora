@@ -43,7 +43,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_InspectOnlyClass", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_InspectOnlyClass", Version = 1)]
 public sealed record class InspectOnlyClass : IEquatable<InspectOnlyClass>
 {
     [Property(0)]

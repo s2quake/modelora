@@ -76,7 +76,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_ObjectStruct", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_ObjectStruct", Version = 1)]
 public readonly struct ObjectStruct : IEquatable<ObjectStruct>
 {
     public ObjectStruct()
@@ -138,7 +138,7 @@ public readonly struct ObjectStruct : IEquatable<ObjectStruct>
     public override int GetHashCode() => ModelResolver.GetHashCode(this);
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_ArrayStruct", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_ArrayStruct", Version = 1)]
 public readonly struct ArrayStruct : IEquatable<ArrayStruct>
 {
     public ArrayStruct()
@@ -196,7 +196,7 @@ public readonly struct ArrayStruct : IEquatable<ArrayStruct>
     public override int GetHashCode() => ModelResolver.GetHashCode(this);
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_MixedStruct", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_MixedStruct", Version = 1)]
 public readonly struct MixedStruct : IEquatable<MixedStruct>
 {
     public MixedStruct()

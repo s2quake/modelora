@@ -56,7 +56,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_EmitDefaultValuesClass", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_EmitDefaultValuesClass", Version = 1)]
 public sealed record class EmitDefaultValuesClass : IEquatable<EmitDefaultValuesClass>
 {
     [Property(0)]
@@ -66,7 +66,7 @@ public sealed record class EmitDefaultValuesClass : IEquatable<EmitDefaultValues
     public string Value2 { get; init; } = string.Empty;
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_EmitDefaultPropertyClass", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_EmitDefaultPropertyClass", Version = 1)]
 public sealed record class EmitDefaultPropertyClass : IEquatable<EmitDefaultPropertyClass>
 {
     [Property(0, EmitDefaultValue = true)]
@@ -76,7 +76,7 @@ public sealed record class EmitDefaultPropertyClass : IEquatable<EmitDefaultProp
     public string Value2 { get; init; } = string.Empty;
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_EmitDefaultThrowClass", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_EmitDefaultThrowClass", Version = 1)]
 public sealed record class EmitDefaultThrowClass : IEquatable<EmitDefaultThrowClass>
 {
     [Property(0)]
