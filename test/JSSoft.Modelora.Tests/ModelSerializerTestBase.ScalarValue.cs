@@ -56,7 +56,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_RecordClassWithScalarValue", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_RecordClassWithScalarValue", Version = 1)]
 public sealed record class RecordClassWithScalarValue : IEquatable<RecordClassWithScalarValue>
 {
     public RecordClassWithScalarValue()
@@ -128,7 +128,7 @@ public sealed record class RecordClassWithScalarValue : IEquatable<RecordClassWi
     public override int GetHashCode() => ModelResolver.GetHashCode(this);
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_StringScalarClass", Kind = ModelScalarKind.String)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_StringScalarClass", Kind = ModelScalarKind.String)]
 public sealed record class StringScalarClass
 {
     public string Value { get; }
@@ -143,7 +143,7 @@ public sealed record class StringScalarClass
     internal string ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_StringScalarStruct", Kind = ModelScalarKind.String)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_StringScalarStruct", Kind = ModelScalarKind.String)]
 public readonly record struct StringScalarStruct
 {
     public string Value { get; }
@@ -158,7 +158,7 @@ public readonly record struct StringScalarStruct
     internal string ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_BooleanScalarClass", Kind = ModelScalarKind.Boolean)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_BooleanScalarClass", Kind = ModelScalarKind.Boolean)]
 public sealed record class BooleanScalarClass
 {
     public bool Value { get; }
@@ -173,7 +173,7 @@ public sealed record class BooleanScalarClass
     internal bool ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_BooleanScalarStruct", Kind = ModelScalarKind.Boolean)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_BooleanScalarStruct", Kind = ModelScalarKind.Boolean)]
 public readonly record struct BooleanScalarStruct
 {
     public bool Value { get; }
@@ -188,7 +188,7 @@ public readonly record struct BooleanScalarStruct
     internal bool ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_Int32ScalarClass", Kind = ModelScalarKind.Int32)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_Int32ScalarClass", Kind = ModelScalarKind.Int32)]
 public sealed record class Int32ScalarClass
 {
     public int Value { get; }
@@ -203,7 +203,7 @@ public sealed record class Int32ScalarClass
     internal int ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_Int32ScalarStruct", Kind = ModelScalarKind.Int32)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_Int32ScalarStruct", Kind = ModelScalarKind.Int32)]
 public readonly record struct Int32ScalarStruct
 {
     public int Value { get; }
@@ -218,7 +218,7 @@ public readonly record struct Int32ScalarStruct
     internal int ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_Int64ScalarClass", Kind = ModelScalarKind.Int64)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_Int64ScalarClass", Kind = ModelScalarKind.Int64)]
 public sealed record class Int64ScalarClass
 {
     public long Value { get; }
@@ -233,7 +233,7 @@ public sealed record class Int64ScalarClass
     internal long ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_Int64ScalarStruct", Kind = ModelScalarKind.Int64)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_Int64ScalarStruct", Kind = ModelScalarKind.Int64)]
 public readonly record struct Int64ScalarStruct
 {
     public long Value { get; }
@@ -248,7 +248,7 @@ public readonly record struct Int64ScalarStruct
     internal long ToScalarValue() => Value;
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_HexScalarClass", Kind = ModelScalarKind.Hex)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_HexScalarClass", Kind = ModelScalarKind.Hex)]
 public sealed record class HexScalarClass : IEquatable<HexScalarClass>
 {
     public byte[] Value { get; }
@@ -267,7 +267,7 @@ public sealed record class HexScalarClass : IEquatable<HexScalarClass>
     public override int GetHashCode() => Value.GetHashCode();
 }
 
-[ModelScalar("Libplanet_Serialization_Tests_ModelSerializerTest_HexScalarStruct", Kind = ModelScalarKind.Hex)]
+[ModelScalar("JSSoft_Modelora_Tests_ModelSerializerTest_HexScalarStruct", Kind = ModelScalarKind.Hex)]
 public readonly record struct HexScalarStruct : IEquatable<HexScalarStruct>
 {
     public byte[] Value { get; }
@@ -300,7 +300,7 @@ public readonly record struct HexScalarStruct : IEquatable<HexScalarStruct>
 }
 
 [ModelScalar(
-    "Libplanet_Serialization_Tests_ModelSerializerTest_GenericScalarClass<>",
+    "JSSoft_Modelora_Tests_ModelSerializerTest_GenericScalarClass<>",
     Kind = ModelScalarKind.String)]
 public sealed record class GenericScalarClass<T>(string Value)
 {
@@ -312,7 +312,7 @@ public sealed record class GenericScalarClass<T>(string Value)
 }
 
 [ModelScalar(
-    "Libplanet_Serialization_Tests_ModelSerializerTest_GenericScalarStruct<>",
+    "JSSoft_Modelora_Tests_ModelSerializerTest_GenericScalarStruct<>",
     Kind = ModelScalarKind.String)]
 public readonly record struct GenericScalarStruct<T>(string Value)
 {

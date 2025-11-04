@@ -13,6 +13,13 @@ namespace JSSoft.Modelora;
 
 public static class TypeUtility
 {
+    private const string TypeExpression = @"(?<type>[a-zA-Z][a-zA-Z0-9_]*)";
+    private const string ArrayExpression = @"(?<array_nullable>\??)(?<array>\[,*\])";
+    private const string GenericExpression = @"(?<generic>\<.+\>)";
+    private const string NullableExpression = @"(?<nullable>\??)";
+    private static readonly string _typeExpression
+        = $"^{TypeExpression}(?:{ArrayExpression}|{GenericExpression})?{NullableExpression}$";
+
     private static readonly ConcurrentDictionary<string, Type> _typeByFullName = [];
     private static readonly ConcurrentDictionary<Type, object> _defaultByType = [];
     private static readonly KnownTypes _knownTypes = new();
@@ -76,14 +83,17 @@ public static class TypeUtility
 
     public static Type GetType(string typeName)
     {
-        var match = Regex.Match(
-            typeName, @"^(?<type>[a-zA-Z][a-zA-Z0-9_]*)(?:(?<array>\[,*\])|(?<generic>\<.+\>))?(?<nullable>\??)$");
+        if (_typeByFullName.TryGetValue(typeName, out var cachedType))
+        {
+            return cachedType;
+        }
+
+        var match = Regex.Match(typeName, _typeExpression);
         if (!match.Success)
         {
             throw new ArgumentException($"Invalid type name: {typeName}", nameof(typeName));
         }
 
-        var isNullable = match.Groups["nullable"].Value == "?";
         var name = match.Groups["type"].Value;
         var genericPart = Regex.Replace(match.Groups["generic"].Value, "^<(.+)>$", "$1");
         var arrayPart = match.Groups["array"].Value;
@@ -102,49 +112,46 @@ public static class TypeUtility
             }
 
             var type = typeDefinition.MakeGenericType([.. genericArgumentList]);
+            var isNullable = match.Groups["nullable"].Value == "?";
             if (isNullable)
             {
-                return typeof(Nullable<>).MakeGenericType(type);
+                var nullableType = typeof(Nullable<>).MakeGenericType(type);
+                _typeByFullName[typeName] = nullableType;
+                return nullableType;
             }
 
+            _typeByFullName[typeName] = type;
             return type;
         }
         else if (arrayPart != string.Empty)
         {
             var elementTypeName = name;
             var elementType = _knownTypes.GetType(elementTypeName);
+            var isNullable = match.Groups["array_nullable"].Value == "?";
             if (isNullable)
             {
                 elementType = typeof(Nullable<>).MakeGenericType(elementType);
             }
 
             var rank = arrayPart.Count(c => c == ',') + 1;
-            return Array.CreateInstance(elementType, new int[rank]).GetType();
+            var type = Array.CreateInstance(elementType, new int[rank]).GetType();
+            _typeByFullName[typeName] = type;
+            return type;
         }
         else
         {
             var type = _knownTypes.GetType(name);
+            var isNullable = match.Groups["nullable"].Value == "?";
             if (isNullable)
             {
-                return typeof(Nullable<>).MakeGenericType(type);
+                var nullableType = typeof(Nullable<>).MakeGenericType(type);
+                _typeByFullName[typeName] = nullableType;
+                return nullableType;
             }
 
+            _typeByFullName[typeName] = type;
             return type;
         }
-    }
-
-    public static bool TryGetType(string typeName, [MaybeNullWhen(false)] out Type type)
-    {
-        if (!_typeByFullName.TryGetValue(typeName, out type))
-        {
-            type = Type.GetType(typeName);
-            if (type is not null)
-            {
-                _typeByFullName[typeName] = type;
-            }
-        }
-
-        return type is not null;
     }
 
     public static bool IsNullableType(Type type)
@@ -155,6 +162,19 @@ public static class TypeUtility
         lock (_lock)
         {
             return GetTypeNameInternal(type);
+        }
+    }
+
+    public static bool IsSupportedType(Type type)
+    {
+        try
+        {
+            _ = GetTypeName(type);
+            return true;
+        }
+        catch (NotSupportedException)
+        {
+            return false;
         }
     }
 
@@ -208,10 +228,6 @@ public static class TypeUtility
         return false;
     }
 
-    public static bool IsKnownType(Type type) => _knownTypes.Contains(type);
-
-    public static bool IsKnownType(string typeName) => _knownTypes.Contains(typeName);
-
     public static Type GetActualType(object? value, Type type)
     {
         if (value is null)
@@ -244,76 +260,41 @@ public static class TypeUtility
         throw new ModelCreationException(type);
     }
 
-    public static string GetFullName(Type type)
-    {
-        if (type.Name is null)
-        {
-            throw new ArgumentException("Type does not have FullName", nameof(type));
-        }
-
-        var name = type.Name;
-        if (type.IsGenericType)
-        {
-            var genericArguments = type.GetGenericArguments();
-            var nameList = new List<string>(genericArguments.Length);
-            foreach (var genericArgument in genericArguments)
-            {
-                var genericArgumentName = $"[{GetFullName(genericArgument)}]";
-                nameList.Add(genericArgumentName);
-            }
-
-            name = $"{name}[{string.Join(',', nameList)}]";
-        }
-
-        if (type.DeclaringType is null)
-        {
-            return type.Name;
-        }
-
-        return $"{GetFullName(type.DeclaringType)}+{name}";
-    }
+    internal static bool IsKnownType(Type type) => _knownTypes.Contains(type);
 
     private static void AddAssembly(Assembly assembly)
     {
-        if (!_addedAssemblies.Add(assembly))
-        {
-            return;
-        }
-
-        var query = from type in assembly.GetTypes()
+        var types = from type in assembly.GetTypes()
                     where type.IsDefined(typeof(ModelAttribute)) ||
                           type.IsDefined(typeof(ModelConverterAttribute))
                     select type;
 
-        foreach (var item in query)
+        foreach (var type in types)
         {
-            if (item.IsDefined(typeof(ModelAttribute)))
+            if (type.GetCustomAttribute<ModelAttribute>() is { } modelAttribute)
             {
-                var attribute = item.GetCustomAttribute<ModelAttribute>()
-                    ?? throw new UnreachableException($"{nameof(ModelAttribute)} cannot be null.");
-                _knownTypes.AddType(item, attribute.TypeName);
+                _knownTypes.AddType(type, modelAttribute.TypeName);
             }
-            else if (item.IsDefined(typeof(ModelConverterAttribute)))
+            else if (type.GetCustomAttribute<ModelConverterAttribute>() is { } modelConverterAttribute)
             {
-                var attribute = item.GetCustomAttribute<ModelConverterAttribute>()
-                    ?? throw new UnreachableException($"{nameof(ModelConverterAttribute)} cannot be null.");
-                _knownTypes.AddType(item, attribute.TypeName);
+                _knownTypes.AddType(type, modelConverterAttribute.TypeName);
             }
 
-            if (item.IsDefined(typeof(ModelKnownTypeAttribute)))
+            if (type.IsDefined(typeof(ModelScalarKnownTypeAttribute)))
             {
-                var knownTypeAttributes = item.GetCustomAttributes<ModelKnownTypeAttribute>();
+                var knownTypeAttributes = type.GetCustomAttributes<ModelScalarKnownTypeAttribute>();
                 foreach (var knownTypeAttribute in knownTypeAttributes)
                 {
-                    if (item.IsAssignableFrom(knownTypeAttribute.Type))
+                    var knownType = knownTypeAttribute.Type;
+                    if (type.IsGenericType && knownType.IsGenericType && type == knownType.GetGenericTypeDefinition())
                     {
-                        throw new InvalidModelException(
-                            $"Type '{knownTypeAttribute.Type.FullName}' must not be " +
-                            $"assignable to '{item.FullName}'.",
-                            item);
+                        _knownTypes.AddType(knownTypeAttribute.Type, knownTypeAttribute.TypeName);
                     }
-
-                    _knownTypes.AddType(knownTypeAttribute.Type, knownTypeAttribute.TypeName);
+                    else
+                    {
+                        Trace.TraceError(
+                            $"Type '{knownTypeAttribute.Type.FullName}' must be assignable to '{type.FullName}'.");
+                    }
                 }
             }
         }
@@ -323,21 +304,26 @@ public static class TypeUtility
 
     private static object CreateDefault(Type type)
     {
+        if (Nullable.GetUnderlyingType(type) is { } underlyingType)
+        {
+            type = underlyingType;
+        }
+
         if (type == typeof(string))
         {
             return string.Empty;
         }
 
-        if (Nullable.GetUnderlyingType(type) is { } underlyingType)
-        {
-            return CreateDefault(underlyingType);
-        }
-
-        return Activator.CreateInstance(type) ?? throw new UnreachableException("ValueType cannot be null");
+        return Activator.CreateInstance(type)!;
     }
 
     private static string GetTypeNameInternal(Type type)
     {
+        if (_knownTypes.TryGetTypeName(type, out var typeName))
+        {
+            return typeName;
+        }
+
         if (!_addedAssemblies.Contains(type.Assembly))
         {
             AddAssembly(type.Assembly);
@@ -345,10 +331,8 @@ public static class TypeUtility
 
         if (Nullable.GetUnderlyingType(type) is { } underlyingType)
         {
-            return $"{GetTypeName(underlyingType)}?";
-        }
-        else if (_knownTypes.TryGetTypeName(type, out var typeName))
-        {
+            typeName = $"{GetTypeName(underlyingType)}?";
+            _knownTypes.AddType(type, typeName);
             return typeName;
         }
         else if (type.IsGenericType)
@@ -364,15 +348,18 @@ public static class TypeUtility
             }
 
             var genericArgumentString = string.Join(',', genericArgumentList);
-            return Regex.Replace(typeDefinitionName, "<.*>", $"<{genericArgumentString}>");
+            typeName = Regex.Replace(typeDefinitionName, "<.*>", $"<{genericArgumentString}>");
+            _knownTypes.AddType(type, typeName);
+            return typeName;
         }
         else if (type.IsArray)
         {
-            var elementType = type.GetElementType()
-                ?? throw new UnreachableException("Array type does not have an element type");
+            var elementType = type.GetElementType()!;
             var elementTypeName = GetTypeName(elementType);
             var rank = type.GetArrayRank();
-            return $"{elementTypeName}[{new string(',', rank - 1)}]";
+            typeName = $"{elementTypeName}[{new string(',', rank - 1)}]";
+            _knownTypes.AddType(type, typeName);
+            return typeName;
         }
         else if (type.IsDefined(typeof(OriginModelAttribute)))
         {

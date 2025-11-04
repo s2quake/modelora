@@ -120,6 +120,67 @@ public sealed class ModelScalarUtilityTests
         Assert.Equal("fail", ex.Message);
     }
 
+    // --- Missing or invalid ToScalarValue / FromScalarValue shape tests ---
+
+    [Fact]
+    public void GetScalarValue_ToScalarValue_Missing_Throws()
+    {
+        var obj = new MissingToScalar();
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetScalarValue(obj));
+        Assert.Equal("type", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetScalarValue_ToScalarValue_WrongReturnType_Throws()
+    {
+        var obj = new WrongReturnToScalar();
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetScalarValue(obj));
+        Assert.Equal("type", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetScalarValue_ToScalarValue_HasParameters_Throws()
+    {
+        var obj = new ParameterizedToScalar();
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetScalarValue(obj));
+        Assert.Equal("type", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetObjectFromScalarValue_FromScalarValue_Missing_Throws()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetObjectFromScalarValue(typeof(MissingFromScalar), "v"));
+        Assert.Equal("type", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetObjectFromScalarValue_FromScalarValue_WrongReturnType_Throws()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetObjectFromScalarValue(typeof(WrongReturnFromScalar), "v"));
+        Assert.Equal("type", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetObjectFromScalarValue_FromScalarValue_WrongParamCount_Throws()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetObjectFromScalarValue(typeof(WrongParamCountFromScalar), "v"));
+        Assert.Equal("type", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetObjectFromScalarValue_FromScalarValue_WrongFirstParamType_Throws()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetObjectFromScalarValue(typeof(WrongFirstParamFromScalar), "v"));
+        Assert.Equal("type", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetObjectFromScalarValue_FromScalarValue_WrongSecondParamType_Throws()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => ModelScalarUtility.GetObjectFromScalarValue(typeof(WrongSecondParamFromScalar), "v"));
+        Assert.Equal("type", ex.ParamName);
+    }
+
     // Ensure analyzers see reflective members as used
     static ModelScalarUtilityTests() => TouchMembers();
 
@@ -167,6 +228,22 @@ public sealed class ModelScalarUtilityTests
         {
             _ = ex.Message;
         }
+
+        // Touch invalid-shape scalar types to satisfy analyzers
+        _ = MissingToScalar.FromScalarValue(sp, "m");
+        var wrt = new WrongReturnToScalar();
+        _ = wrt.ToScalarValue();
+        _ = WrongReturnToScalar.FromScalarValue(sp, "wrt");
+        var pt = new ParameterizedToScalar();
+        _ = pt.ToScalarValue("p");
+        _ = ParameterizedToScalar.FromScalarValue(sp, "pt");
+
+        var mf = new MissingFromScalar();
+        _ = mf.ToScalarValue();
+        _ = WrongReturnFromScalar.FromScalarValue(sp, "x");
+        _ = WrongParamCountFromScalar.FromScalarValue(sp, "y", 0);
+        _ = WrongFirstParamFromScalar.FromScalarValue(new object(), "z");
+        _ = WrongSecondParamFromScalar.FromScalarValue(sp, 1);
     }
 
     // Helper/test-only types
@@ -258,4 +335,152 @@ public sealed class ModelScalarUtilityTests
     {
         public object? GetService(Type serviceType) => null;
     }
+
+    // Types for invalid method shape scenarios
+
+#pragma warning disable LIBP1002 // Model scalar class must have ToScalarValue method
+    [ModelScalar("missing_to", Kind = ModelScalarKind.String)]
+    private sealed class MissingToScalar
+    {
+        public static MissingToScalar FromScalarValue(IServiceProvider sp, string value)
+        {
+            _ = sp;
+            _ = value;
+            return new();
+        }
+    }
+#pragma warning restore LIBP1002 // Model scalar class must have ToScalarValue method
+
+#pragma warning disable LIBP1002 // Model scalar class must have ToScalarValue method
+    [ModelScalar("wrong_return_to", Kind = ModelScalarKind.String)]
+    private sealed class WrongReturnToScalar
+    {
+        // Wrong return type: int instead of string
+        public int ToScalarValue()
+        {
+            _ = this;
+            return 1;
+        }
+
+        public static WrongReturnToScalar FromScalarValue(IServiceProvider sp, string value)
+        {
+            _ = sp;
+            _ = value;
+            return new();
+        }
+    }
+#pragma warning restore LIBP1002 // Model scalar class must have ToScalarValue method
+
+#pragma warning disable LIBP1002 // Model scalar class must have ToScalarValue method
+    [ModelScalar("parameterized_to", Kind = ModelScalarKind.String)]
+    private sealed class ParameterizedToScalar
+    {
+        // Has a parameter - invalid
+        public string ToScalarValue(string extra)
+        {
+            _ = this;
+            _ = extra;
+            return extra;
+        }
+
+        public static ParameterizedToScalar FromScalarValue(IServiceProvider sp, string value)
+        {
+            _ = sp;
+            _ = value;
+            return new();
+        }
+    }
+#pragma warning restore LIBP1002 // Model scalar class must have ToScalarValue method
+
+#pragma warning disable LIBP1003 // Model scalar class must have FromScalarValue method
+    [ModelScalar("missing_from", Kind = ModelScalarKind.String)]
+    private sealed class MissingFromScalar
+    {
+        public string ToScalarValue()
+        {
+            _ = this;
+            return string.Empty;
+        }
+    }
+#pragma warning restore LIBP1003 // Model scalar class must have FromScalarValue method
+
+#pragma warning disable LIBP1003 // Model scalar class must have FromScalarValue method
+    [ModelScalar("wrong_return_from", Kind = ModelScalarKind.String)]
+    private sealed class WrongReturnFromScalar
+    {
+        public string ToScalarValue()
+        {
+            _ = this;
+            return string.Empty;
+        }
+
+        // Wrong return type: string instead of the declaring type
+        public static string FromScalarValue(IServiceProvider sp, string value)
+        {
+            _ = sp;
+            return value;
+        }
+    }
+#pragma warning restore LIBP1003 // Model scalar class must have FromScalarValue method
+
+#pragma warning disable LIBP1003 // Model scalar class must have FromScalarValue method
+    [ModelScalar("wrong_param_count_from", Kind = ModelScalarKind.String)]
+    private sealed class WrongParamCountFromScalar
+    {
+        public string ToScalarValue()
+        {
+            _ = this;
+            return string.Empty;
+        }
+
+        // Has 3 parameters instead of 2
+        public static WrongParamCountFromScalar FromScalarValue(IServiceProvider sp, string value, int extra)
+        {
+            _ = sp;
+            _ = value;
+            _ = extra;
+            return new();
+        }
+    }
+#pragma warning restore LIBP1003 // Model scalar class must have FromScalarValue method
+
+#pragma warning disable LIBP1003 // Model scalar class must have FromScalarValue method
+    [ModelScalar("wrong_first_param_from", Kind = ModelScalarKind.String)]
+    private sealed class WrongFirstParamFromScalar
+    {
+        public string ToScalarValue()
+        {
+            _ = this;
+            return string.Empty;
+        }
+
+        // First parameter must be IServiceProvider
+        public static WrongFirstParamFromScalar FromScalarValue(object notServiceProvider, string value)
+        {
+            _ = notServiceProvider;
+            _ = value;
+            return new();
+        }
+    }
+#pragma warning restore LIBP1003 // Model scalar class must have FromScalarValue method
+
+#pragma warning disable LIBP1003 // Model scalar class must have FromScalarValue method
+    [ModelScalar("wrong_second_param_from", Kind = ModelScalarKind.String)]
+    private sealed class WrongSecondParamFromScalar
+    {
+        public string ToScalarValue()
+        {
+            _ = this;
+            return string.Empty;
+        }
+
+        // Second parameter must be string (for Kind.String)
+        public static WrongSecondParamFromScalar FromScalarValue(IServiceProvider sp, int notString)
+        {
+            _ = sp;
+            _ = notString;
+            return new();
+        }
+    }
+#pragma warning restore LIBP1003 // Model scalar class must have FromScalarValue method
 }

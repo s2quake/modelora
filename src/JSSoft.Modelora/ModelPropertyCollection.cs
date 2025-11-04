@@ -29,6 +29,12 @@ public sealed class ModelPropertyCollection : IEnumerable<ModelProperty>
         {
             var index = propertyAttribute.Index;
             var propertyType = propertyInfo.PropertyType;
+            if (!TypeUtility.IsSupportedType(propertyType))
+            {
+                throw new InvalidModelException(
+                    $"Property {propertyInfo.Name} of {type} has an unsupported type {propertyType}.", type);
+            }
+
             if (index != builder.Count)
             {
                 throw new NotSupportedException(

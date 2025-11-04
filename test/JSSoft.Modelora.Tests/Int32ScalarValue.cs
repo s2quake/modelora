@@ -7,18 +7,13 @@ namespace JSSoft.Modelora.Tests;
 
 [ModelScalar("int32_scalar_value", Kind = ModelScalarKind.Int32)]
 public readonly partial record struct Int32ScalarValue(int Value)
-    : IEquatable<Int32ScalarValue>, IComparable<Int32ScalarValue>, IComparable
+    : IEquatable<Int32ScalarValue>
 {
     public int ToScalarValue() => Value;
 
-    public static Int32ScalarValue FromScalarValue(IServiceProvider serviceProvider, int value) => new(value);
-
-    public int CompareTo(object? obj) => obj switch
+    public static Int32ScalarValue FromScalarValue(IServiceProvider serviceProvider, int value)
     {
-        null => 1,
-        Int32ScalarValue other => CompareTo(other),
-        _ => throw new ArgumentException($"Argument {nameof(obj)} is not ${nameof(Int32ScalarValue)}.", nameof(obj)),
-    };
-
-    public int CompareTo(Int32ScalarValue other) => Value.CompareTo(other.Value);
+        _ = serviceProvider.GetService(typeof(object));
+        return new(value);
+    }
 }

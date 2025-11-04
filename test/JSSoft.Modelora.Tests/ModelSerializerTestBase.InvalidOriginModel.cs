@@ -6,7 +6,7 @@
 namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
-    [Model("Libplanet_Serialization_Tests_OriginModel_InvalidModelType", Version = 2)]
+    [Model("JSSoft_Modelora_Tests_OriginModel_InvalidModelType", Version = 2)]
     public sealed record class OriginModel_InvalidModelType
     {
         [OriginModel(Type = typeof(ModelRecord))]
@@ -38,7 +38,7 @@ namespace JSSoft.Modelora.Tests
 namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
-    [Model("Libplanet_Serialization_Tests_OriginModel_ObjectType", Version = 2)]
+    [Model("JSSoft_Modelora_Tests_OriginModel_ObjectType", Version = 2)]
     public sealed record class OriginModel_ObjectType
     {
         [OriginModel(Type = typeof(object))]
@@ -99,7 +99,7 @@ namespace JSSoft.Modelora.Tests
 namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
-    [Model("Libplanet_Serialization_Tests_OriginModel_NotDefined", Version = 2)]
+    [Model("JSSoft_Modelora_Tests_OriginModel_NotDefined", Version = 2)]
     public sealed record class OriginModel_NotDefined
     {
         public sealed record class Version1

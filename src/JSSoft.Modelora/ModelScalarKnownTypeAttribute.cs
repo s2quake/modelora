@@ -1,4 +1,4 @@
-﻿// <copyright file="ModelKnownTypeAttribute.cs" company="JSSoft">
+﻿// <copyright file="ModelScalarKnownTypeAttribute.cs" company="JSSoft">
 //   Copyright (c) 2025 Jeesu Choi. All Rights Reserved.
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
@@ -6,7 +6,7 @@
 namespace JSSoft.Modelora;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
-public sealed class ModelKnownTypeAttribute(Type type, string typeName) : Attribute
+public sealed class ModelScalarKnownTypeAttribute(Type type, string typeName) : Attribute
 {
     public Type Type { get; } = type;
 

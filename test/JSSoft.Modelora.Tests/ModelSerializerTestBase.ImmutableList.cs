@@ -50,7 +50,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_RecordClassWithImmutableList", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_RecordClassWithImmutableList", Version = 1)]
 public sealed record class RecordClassWithImmutableList
     : IEquatable<RecordClassWithImmutableList>
 {

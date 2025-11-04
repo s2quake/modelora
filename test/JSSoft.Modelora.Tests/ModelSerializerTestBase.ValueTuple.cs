@@ -25,7 +25,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     }
 }
 
-[Model("Libplanet_Serialization_Tests_ModelSerializerTest_RecordClassWithValueTuple", Version = 1)]
+[Model("JSSoft_Modelora_Tests_ModelSerializerTest_RecordClassWithValueTuple", Version = 1)]
 public sealed record class RecordClassWithValueTuple : IEquatable<RecordClassWithValueTuple>
 {
     public RecordClassWithValueTuple()

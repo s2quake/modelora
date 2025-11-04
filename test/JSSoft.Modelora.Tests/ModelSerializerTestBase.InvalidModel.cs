@@ -5,7 +5,7 @@
 
 namespace JSSoft.Modelora.Tests
 {
-    [Model("Libplanet_Serialization_Tests_InvalidModel_WrongVersion", Version = 3)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_WrongVersion", Version = 3)]
     public sealed record class InvalidModel_WrongVersion
     {
     }
@@ -28,7 +28,7 @@ namespace JSSoft.Modelora.Tests
 namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_WrongVersion_WithHistory", Version = 1)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_WrongVersion_WithHistory", Version = 1)]
     public sealed record class InvalidModel_WrongVersion_WithHistory
     {
         [OriginModel(Type = typeof(InvalidModel_WrongVersion_WithHistory))]
@@ -59,7 +59,7 @@ namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
     [ModelHistory(Version = 3, Type = typeof(Version2))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_WrongHistoryVersion", Version = 4)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_WrongHistoryVersion", Version = 4)]
     public sealed record class InvalidModel_WrongHistoryVersion
     {
         [OriginModel(Type = typeof(InvalidModel_WrongHistoryVersion))]
@@ -110,7 +110,7 @@ namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
     [ModelHistory(Version = 2, Type = typeof(Version2))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_ModelHistory_NoConstructor", Version = 3)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_ModelHistory_NoConstructor", Version = 3)]
     public sealed record class InvalidModel_ModelHistory_NoConstructor
     {
         [OriginModel(Type = typeof(InvalidModel_ModelHistory_NoConstructor))]
@@ -156,7 +156,7 @@ namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
     [ModelHistory(Version = 2, Type = typeof(Version2))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_ModelHistory_NoDefaultConstructor", Version = 3)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_ModelHistory_NoDefaultConstructor", Version = 3)]
     public sealed record class InvalidModel_ModelHistory_NoDefaultConstructor
     {
         [OriginModel(Type = typeof(InvalidModel_ModelHistory_NoDefaultConstructor))]
@@ -201,7 +201,7 @@ namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
     [ModelHistory(Version = 2, Type = typeof(Version2))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_NoConstructor", Version = 3)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_NoConstructor", Version = 3)]
     public sealed record class InvalidModel_NoConstructor
     {
         [OriginModel(Type = typeof(InvalidModel_NoConstructor))]
@@ -246,7 +246,7 @@ namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
     [ModelHistory(Version = 2, Type = typeof(Version2))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_NoDefaultConstructor", Version = 3)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_NoDefaultConstructor", Version = 3)]
     public sealed record class InvalidModel_NoDefaultConstructor
     {
         [OriginModel(Type = typeof(InvalidModel_NoDefaultConstructor))]
@@ -290,7 +290,7 @@ namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
     [ModelHistory(Version = 100, Type = typeof(Version2))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_SkippedHistoryVersion", Version = 3)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_SkippedHistoryVersion", Version = 3)]
     public sealed record class InvalidModel_SkippedHistoryVersion
     {
         public InvalidModel_SkippedHistoryVersion()
@@ -338,7 +338,7 @@ namespace JSSoft.Modelora.Tests
 {
     [ModelHistory(Version = 1, Type = typeof(Version1))]
     [ModelHistory(Version = 2, Type = typeof(Version1))]
-    [Model("Libplanet_Serialization_Tests_InvalidModel_ExistingHistoryType", Version = 3)]
+    [Model("JSSoft_Modelora_Tests_InvalidModel_ExistingHistoryType", Version = 3)]
     public sealed record class InvalidModel_ExistingHistoryType
     {
         public InvalidModel_ExistingHistoryType()

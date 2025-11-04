@@ -18,22 +18,14 @@ internal sealed class NullableModelConverter : IModelConverter
             throw new ModelException($"Type '{type}' is not a nullable type.");
         }
 
-        if (!ModelResolver.TryGetConverter(underlyingType, out var converter))
-        {
-            throw new ModelException($"Unsupported type {underlyingType}");
-        }
-
+        var converter = ModelResolver.GetConverter(underlyingType);
         return converter.Read(reader, underlyingType, options);
     }
 
     public void Write(BinaryWriter writer, object value, ModelOptions options)
     {
         var type = value.GetType();
-        if (!ModelResolver.TryGetConverter(type, out var converter))
-        {
-            throw new ModelException($"Unsupported type {type}");
-        }
-
+        var converter = ModelResolver.GetConverter(type);
         converter.Write(writer, value, options);
     }
 }

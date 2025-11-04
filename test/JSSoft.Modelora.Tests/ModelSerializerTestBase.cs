@@ -46,4 +46,11 @@ public abstract partial class ModelSerializerTestBase<TData>(ITestOutputHelper o
 
         throw new InvalidOperationException("Failed to deserialize");
     }
+
+    protected T Clone<T>(T obj)
+        where T : notnull
+        => Clone(obj, ModelOptions.Empty);
+
+    protected abstract T Clone<T>(T obj, ModelOptions options)
+        where T : notnull;
 }
