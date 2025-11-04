@@ -15,4 +15,7 @@ public sealed partial class ModelYamlSerializerTest(ITestOutputHelper output)
 
     protected override string Serialize(object? obj, Type type, ModelOptions options)
         => ModelYamlSerializer.Serialize(obj, type, options);
+
+    protected override T Clone<T>(T obj, ModelOptions options)
+        => ModelYamlSerializer.Clone(obj, options);
 }

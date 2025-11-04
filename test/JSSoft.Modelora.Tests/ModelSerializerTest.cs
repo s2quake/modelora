@@ -16,6 +16,9 @@ public sealed class ModelSerializerTest(ITestOutputHelper output) : ModelSeriali
     protected override byte[] Serialize(object? obj, Type type, ModelOptions options)
         => ModelSerializer.Serialize(obj, type, options);
 
+    protected override T Clone<T>(T obj, ModelOptions options)
+        => ModelSerializer.Clone(obj, options);
+
     [Fact]
     public void NullValue_Test()
     {

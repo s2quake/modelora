@@ -15,4 +15,7 @@ public sealed partial class ModelJsonSerializerTest(ITestOutputHelper output)
 
     protected override string Serialize(object? obj, Type type, ModelOptions options)
         => ModelJsonSerializer.Serialize(obj, type, options);
+
+    protected override T Clone<T>(T obj, ModelOptions options)
+        => ModelJsonSerializer.Clone(obj, options);
 }
