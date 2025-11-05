@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.IO;
+using System.Numerics;
 
 namespace JSSoft.Modelora.Extensions;
 
@@ -41,6 +42,33 @@ public static class BinaryReaderExtensions
     {
         ulong raw = ReadUnsignedVarint64(@this);
         return (long)((raw >> 1) ^ (ulong)-(long)(raw & 1ul));
+    }
+
+    public static BigInteger ReadZigZagEncodedBigInteger(this BinaryReader @this)
+    {
+        var zigzag = ReadUnsignedVarintBigInteger(@this);
+        return (zigzag & 1) == 0 ? zigzag >> 1 : -((zigzag + 1) >> 1);
+    }
+
+    private static BigInteger ReadUnsignedVarintBigInteger(BinaryReader reader)
+    {
+        BigInteger result = 0;
+        int shift = 0;
+
+        while (true)
+        {
+            byte b = reader.ReadByte();
+            result |= (BigInteger)(b & 0x7F) << shift;
+
+            if ((b & 0x80) == 0)
+            {
+                break;
+            }
+
+            shift += 7;
+        }
+
+        return result;
     }
 
     private static uint ReadUnsignedVarint32(BinaryReader @this)

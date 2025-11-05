@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.IO;
+using System.Numerics;
 using JSSoft.Modelora.Extensions;
 
 namespace JSSoft.Modelora.Tests.Extensions;
@@ -74,6 +75,24 @@ public sealed class BinaryWriterZigZagExtensionsTest
     }
 
     [Theory]
+    [ClassData(typeof(Int64KnownPatternsData))]
+    public void WriteZigZagEncodedBigInteger_Matches_Int64_Patterns(long value, byte[] expectedBytes)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        var big = new BigInteger(value);
+        bw.WriteZigZagEncodedBigInteger(big);
+
+        var actualBytes = ms.ToArray();
+        Assert.Equal(expectedBytes, actualBytes);
+
+        ms.Position = 0;
+        using var br = new BinaryReader(ms);
+        var read = br.ReadZigZagEncodedInt64();
+        Assert.Equal(value, read);
+    }
+
+    [Theory]
     [ClassData(typeof(Int32KnownPatternsData))]
     public void WriteZigZagEncodedInt32_KnownPatterns(int value, byte[] expected)
     {
@@ -84,6 +103,11 @@ public sealed class BinaryWriterZigZagExtensionsTest
         var actual = ms.ToArray();
 
         Assert.Equal(expected, actual);
+
+        ms.Position = 0;
+        using var br = new BinaryReader(ms);
+        var read = br.ReadZigZagEncodedInt32();
+        Assert.Equal(value, read);
     }
 
     [Theory]
@@ -120,6 +144,11 @@ public sealed class BinaryWriterZigZagExtensionsTest
         using var bw = new BinaryWriter(ms);
         bw.WriteZigZagEncodedInt32(value);
         Assert.Equal(expectedLength, (int)ms.Length);
+
+        ms.Position = 0;
+        using var br = new BinaryReader(ms);
+        var read = br.ReadZigZagEncodedInt32();
+        Assert.Equal(value, read);
     }
 
     [Theory]
@@ -132,6 +161,11 @@ public sealed class BinaryWriterZigZagExtensionsTest
         var actual = ms.ToArray();
 
         Assert.Equal(expected, actual);
+
+        ms.Position = 0;
+        using var br = new BinaryReader(ms);
+        var read = br.ReadZigZagEncodedInt64();
+        Assert.Equal(value, read);
     }
 
     [Theory]
@@ -206,5 +240,10 @@ public sealed class BinaryWriterZigZagExtensionsTest
         using var bw = new BinaryWriter(ms);
         bw.WriteZigZagEncodedInt64(value);
         Assert.Equal(expectedLength, (int)ms.Length);
+
+        ms.Position = 0;
+        using var br = new BinaryReader(ms);
+        var read = br.ReadZigZagEncodedInt64();
+        Assert.Equal(value, read);
     }
 }

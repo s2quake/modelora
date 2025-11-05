@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.IO;
+using System.Numerics;
 
 namespace JSSoft.Modelora.Extensions;
 
@@ -57,5 +58,18 @@ public static class BinaryWriterExtensions
 
             @this.Write((byte)zigzag);
         }
+    }
+
+    public static void WriteZigZagEncodedBigInteger(this BinaryWriter @this, BigInteger value)
+    {
+        var zigzag = value < 0 ? ((-value) << 1) - 1 : value << 1;
+
+        while (zigzag >= 0x80)
+        {
+            @this.Write((byte)(((int)(zigzag & 0x7F)) | 0x80));
+            zigzag >>= 7;
+        }
+
+        @this.Write((byte)zigzag);
     }
 }
