@@ -39,7 +39,7 @@ $options = @(
     $PullRequestNumber ? "--version-suffix preview.$PullRequestNumber" : ""
     $keyPathExits ? "-p:TreatWarningsAsErrors=true" : ""
     $keyPathExits ? "-p:AssemblyOriginatorKeyFile='$KeyPath'" : ""
-    $CommitSHA ? "-p:RepositoryUrl='$packageProjectUrl/tree/$CommitSHA'" : ""
+    $CommitSHA ? "-p:RepositoryCommit='$CommitSHA'" : ""
 ) | Where-Object { $_ }
 
 Invoke-Expression -Command "dotnet pack $($options -join " ")"
