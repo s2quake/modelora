@@ -27,7 +27,6 @@ if ($null -eq $result) {
     Write-Host "Package project URL not found"
     exit 1
 }
-$packageProjectUrl = $result.Node.InnerText
 
 $KeyPath = $KeyPath ? $(Resolve-Path -Path $KeyPath) : ""
 $OutputPath = $OutputPath ? [System.IO.Path]::GetFullPath($OutputPath) : ""

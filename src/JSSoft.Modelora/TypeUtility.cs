@@ -78,10 +78,7 @@ public static class TypeUtility
             {
                 lock (_lock)
                 {
-                    if (!_addedAssemblies.Contains(args.LoadedAssembly))
-                    {
-                        AddAssembly(args.LoadedAssembly);
-                    }
+                    AddAssembly(args.LoadedAssembly);
                 }
             }
         };
@@ -271,24 +268,24 @@ public static class TypeUtility
     private static void AddAssembly(Assembly assembly)
     {
         var types = from type in assembly.GetTypes()
-                    where type.IsDefined(typeof(ModelAttribute)) ||
-                          type.IsDefined(typeof(ModelConverterAttribute))
+                    where type.IsDefined(typeof(ModelAttribute), inherit: false) ||
+                          type.IsDefined(typeof(ModelConverterAttribute), inherit: false)
                     select type;
 
         foreach (var type in types)
         {
-            if (type.GetCustomAttribute<ModelAttribute>() is { } modelAttribute)
+            if (type.GetCustomAttribute<ModelAttribute>(inherit: false) is { } modelAttribute)
             {
                 _knownTypes.AddType(type, modelAttribute.TypeName);
             }
-            else if (type.GetCustomAttribute<ModelConverterAttribute>() is { } modelConverterAttribute)
+            else if (type.GetCustomAttribute<ModelConverterAttribute>(inherit: false) is { } modelConverterAttribute)
             {
                 _knownTypes.AddType(type, modelConverterAttribute.TypeName);
             }
 
             if (type.IsDefined(typeof(ModelScalarKnownTypeAttribute)))
             {
-                var knownTypeAttributes = type.GetCustomAttributes<ModelScalarKnownTypeAttribute>();
+                var knownTypeAttributes = type.GetCustomAttributes<ModelScalarKnownTypeAttribute>(inherit: false);
                 foreach (var knownTypeAttribute in knownTypeAttributes)
                 {
                     var knownType = knownTypeAttribute.Type;
