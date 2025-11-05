@@ -41,7 +41,10 @@ internal static class IEmitterExtensions
         => @this.Emit(new Scalar(AnchorName.Empty, TagName.Empty, "null"));
 
     public static void WriteStringValue(this IEmitter @this, string value)
-        => @this.Emit(new Scalar(AnchorName.Empty, TagName.Empty, value));
+    {
+        var style = NeedsQuoting(value) ? ScalarStyle.DoubleQuoted : ScalarStyle.Any;
+        @this.Emit(new Scalar(AnchorName.Empty, TagName.Empty, value, style, isPlainImplicit: true, isQuotedImplicit: false));
+    }
 
     public static void WriteNumberValue(this IEmitter @this, int value)
         => @this.Emit(new Scalar(AnchorName.Empty, TagName.Empty, $"{value}"));
@@ -51,4 +54,26 @@ internal static class IEmitterExtensions
 
     public static void WriteBooleanValue(this IEmitter @this, bool value)
         => @this.Emit(new Scalar(AnchorName.Empty, TagName.Empty, $"{value}".ToLowerInvariant()));
+
+    private static bool NeedsQuoting(string value)
+    {
+        if (value == string.Empty)
+        {
+            return false;
+        }
+
+        return value is "null" or "true" or "false" or "yes" or "no" or "on" or "off"
+            || IsNumericLike(value);
+    }
+
+    private static bool IsNumericLike(string value)
+    {
+        if (value == string.Empty)
+        {
+            return false;
+        }
+
+        var firstChar = value[0];
+        return firstChar is >= '0' and <= '9' or '-' or '+' or '.';
+    }
 }
