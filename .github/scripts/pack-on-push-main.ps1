@@ -51,3 +51,15 @@ $nupkgs | ForEach-Object {
         throw "Failed to push $_ to NuGet."
     }
 }
+
+$snupkgs = Get-ChildItem -Path $OutputPath -Filter "*.snupkg" | ForEach-Object { $_.FullName }
+$snupkgs = $skipNugetUpload ? @() : $snupkgs
+$snupkgs | ForEach-Object {
+    dotnet nuget push `
+        $_ `
+        --api-key $env:NUGET_API_KEY `
+        --source https://api.nuget.org/v3/index.json
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to push $_ to NuGet."
+    }
+}
