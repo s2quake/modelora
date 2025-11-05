@@ -13,6 +13,7 @@ public abstract partial class ModelSerializerTestBase<TData>
     [InlineData(0)]
     [InlineData(1074183504)]
     [InlineData(1849913649)]
+    [InlineData(250767989)]
     [ClassData(typeof(RandomSeedsData))]
     public void ImmutableDictionaryProperty_SerializeAndDeserialize_Test(int seed)
     {
@@ -51,7 +52,6 @@ public abstract partial class ModelSerializerTestBase<TData>
 
 [Model("JSSoft_Modelora_Tests_ModelSerializerTest_RecordClassWithImmutableDictionary", Version = 1)]
 public sealed record class RecordClassWithImmutableDictionary
-    : IEquatable<RecordClassWithImmutableDictionary>
 {
     public RecordClassWithImmutableDictionary()
     {
