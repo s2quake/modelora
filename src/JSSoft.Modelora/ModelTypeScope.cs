@@ -38,7 +38,7 @@ internal static class ModelTypeScope
     public static bool CanWriteDefaultValue(ModelOptions options)
         => !options.EmitDefaultValues && !Current.EmitDefaultValue;
 
-    private sealed class PopOnDispose(Stack<Properties> stack) : IDisposable
+    private readonly struct PopOnDispose(Stack<Properties> stack) : IDisposable
     {
         public void Dispose()
         {
@@ -49,7 +49,7 @@ internal static class ModelTypeScope
         }
     }
 
-    public record class Properties(Type Type, bool EmitDefaultValue = false)
+    public readonly record struct Properties(Type Type, bool EmitDefaultValue = false)
     {
     }
 }

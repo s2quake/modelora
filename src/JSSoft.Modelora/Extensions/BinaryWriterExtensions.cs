@@ -4,7 +4,6 @@
 // </copyright>
 
 using System.IO;
-using System.Numerics;
 
 namespace JSSoft.Modelora.Extensions;
 

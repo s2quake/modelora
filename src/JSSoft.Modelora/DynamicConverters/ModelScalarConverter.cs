@@ -3,15 +3,13 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
 using System.Reflection;
-using JSSoft.Modelora.Extensions;
 
 namespace JSSoft.Modelora.DynamicConverters;
 
-internal sealed class ModelScalarConverter : ModelConverterBase<object>
+internal sealed class ModelScalarConverter : ModelConverter<object>
 {
-    protected override object? Read(BinaryReader reader, Type type, ModelOptions options)
+    protected override object? Read(ref ModelReader reader, Type type, ModelOptions options)
     {
         if (type.GetCustomAttribute<ModelScalarAttribute>() is not { } attribute)
         {
@@ -24,15 +22,15 @@ internal sealed class ModelScalarConverter : ModelConverterBase<object>
         {
             ModelScalarKind.String => reader.ReadString(),
             ModelScalarKind.Boolean => reader.ReadBoolean(),
-            ModelScalarKind.Int32 => reader.ReadZigZagEncodedInt32(),
-            ModelScalarKind.Int64 => reader.ReadZigZagEncodedInt64(),
-            ModelScalarKind.Hex => reader.ReadBytes(reader.ReadZigZagEncodedInt32()),
+            ModelScalarKind.Int32 => reader.ReadInt32(),
+            ModelScalarKind.Int64 => reader.ReadInt64(),
+            ModelScalarKind.Hex => reader.ReadBytes(reader.ReadInt32()).ToArray(),
             _ => throw new NotSupportedException("The scalar value is of an unsupported type."),
         };
         return ModelScalarUtility.GetObjectFromScalarValue(options, type, scalarValue);
     }
 
-    protected override void Write(BinaryWriter writer, object value, ModelOptions options)
+    protected override void Write(ref ModelWriter writer, object value, ModelOptions options)
     {
         var scalarValue = ModelScalarUtility.GetScalarValue(value);
         switch (scalarValue)
@@ -44,13 +42,13 @@ internal sealed class ModelScalarConverter : ModelConverterBase<object>
                 writer.Write(b);
                 break;
             case int i:
-                writer.WriteZigZagEncodedInt32(i);
+                writer.Write(i);
                 break;
             case long l:
-                writer.WriteZigZagEncodedInt64(l);
+                writer.Write(l);
                 break;
             case byte[] bytes:
-                writer.WriteZigZagEncodedInt32(bytes.Length);
+                writer.Write(bytes.Length);
                 writer.Write(bytes);
                 break;
             default:

@@ -29,9 +29,21 @@ internal sealed record class ModelData
         writer.WriteZigZagEncodedInt32(Version);
     }
 
+    public void Write(ref ModelWriter writer)
+    {
+        writer.Write(TypeName);
+        writer.Write(Version);
+    }
+
     public static ModelData GetData(BinaryReader reader) => new()
     {
         TypeName = reader.ReadString(),
         Version = reader.ReadZigZagEncodedInt32(),
+    };
+
+    public static ModelData GetData(ref ModelReader reader) => new()
+    {
+        TypeName = reader.ReadString(),
+        Version = reader.ReadInt32(),
     };
 }

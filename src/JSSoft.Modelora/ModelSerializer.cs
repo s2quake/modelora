@@ -3,8 +3,7 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-using System.Text;
+using System.Buffers;
 using static JSSoft.Modelora.ModelResolver;
 
 namespace JSSoft.Modelora;
@@ -34,13 +33,13 @@ public static class ModelSerializer
 
     public static byte[] Serialize(object? obj, Type type, ModelOptions options)
     {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
-        Serialize(writer, obj, type, options);
-        return stream.ToArray();
+        var buffer = new ArrayBufferWriter<byte>();
+        var writer = new ModelWriter(buffer);
+        Serialize(ref writer, obj, type, options);
+        return writer.ToByteArray();
     }
 
-    public static void Serialize(BinaryWriter writer, object? value, Type type, ModelOptions options)
+    public static void Serialize(ref ModelWriter writer, object? value, Type type, ModelOptions options)
     {
         if (value is null)
         {
@@ -48,11 +47,11 @@ public static class ModelSerializer
             return;
         }
 
-        var data = new ModelData(type);
         if (!ModelTypeScope.CanOmitTypeInfo(type, options))
         {
+            var data = new ModelData(type);
             writer.Write((byte)DataType.Header);
-            data.Write(writer);
+            data.Write(ref writer);
         }
 
         if (TypeUtility.IsDefault(value) && ModelTypeScope.CanWriteDefaultValue(options))
@@ -62,7 +61,7 @@ public static class ModelSerializer
         else if (TryGetConverter(type, out var converter))
         {
             writer.Write((byte)DataType.Value);
-            SerializeByConverter(writer, value, options, converter);
+            SerializeByConverter(ref writer, value, options, converter);
         }
         else
         {
@@ -80,12 +79,12 @@ public static class ModelSerializer
 
     public static object? Deserialize(ReadOnlySpan<byte> bytes, Type type, ModelOptions options)
     {
-        using var stream = new MemoryStream(bytes.ToArray());
-        using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
-        return Deserialize(reader, type, options);
+        var sequence = new ReadOnlySequence<byte>(bytes.ToArray());
+        var reader = new ModelReader(sequence);
+        return Deserialize(ref reader, type, options);
     }
 
-    public static object? Deserialize(BinaryReader reader, Type type, ModelOptions options)
+    public static object? Deserialize(ref ModelReader reader, Type type, ModelOptions options)
     {
         var dataType = (DataType)reader.ReadByte();
         if (dataType == DataType.Null)
@@ -101,7 +100,7 @@ public static class ModelSerializer
         var actualType = type;
         if (dataType == DataType.Header)
         {
-            var header = ModelData.GetData(reader);
+            var header = ModelData.GetData(ref reader);
             var headerType = TypeUtility.GetType(header.TypeName);
             actualType = ModelResolver.GetType(headerType, header.Version);
             dataType = (DataType)reader.ReadByte();
@@ -118,16 +117,16 @@ public static class ModelSerializer
         }
         else if (dataType == DataType.Value && TryGetConverter(actualType, out var converter))
         {
-            return converter.Read(reader, actualType, options);
+            return converter.Read(ref reader, actualType, options);
         }
 
         throw new ModelException($"Invalid data type {actualType}.");
     }
 
-    public static T Deserialize<T>(BinaryReader reader, ModelOptions options)
+    public static T Deserialize<T>(ref ModelReader reader, ModelOptions options)
         where T : notnull
     {
-        if (Deserialize(reader, typeof(T), options) is T obj)
+        if (Deserialize(ref reader, typeof(T), options) is T obj)
         {
             return obj;
         }
@@ -142,9 +141,9 @@ public static class ModelSerializer
     public static T Deserialize<T>(ReadOnlySpan<byte> bytes, ModelOptions options)
         where T : notnull
     {
-        using var stream = new MemoryStream(bytes.ToArray());
-        using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
-        return Deserialize<T>(reader, options);
+        var sequence = new ReadOnlySequence<byte>(bytes.ToArray());
+        var reader = new ModelReader(sequence);
+        return Deserialize<T>(ref reader, options);
     }
 
     public static T Clone<T>(T obj)
@@ -154,20 +153,19 @@ public static class ModelSerializer
     public static T Clone<T>(T obj, ModelOptions options)
         where T : notnull
     {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
-        Serialize(writer, obj, typeof(T), options);
-        stream.Position = 0;
-        using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
-        return Deserialize<T>(reader, options);
+        var buffer = new ArrayBufferWriter<byte>();
+        var writer = new ModelWriter(buffer);
+        Serialize(ref writer, obj, typeof(T), options);
+        var reader = new ModelReader(new ReadOnlySequence<byte>(buffer.WrittenMemory));
+        return Deserialize<T>(ref reader, options);
     }
 
     private static void SerializeByConverter(
-        BinaryWriter writer, object obj, ModelOptions options, IModelConverter converter)
+        ref ModelWriter writer, object obj, ModelOptions options, IModelConverter converter)
     {
         try
         {
-            converter.Write(writer, obj, options);
+            converter.Write(ref writer, obj, options);
         }
         catch (Exception e) when (e is not ModelException)
         {

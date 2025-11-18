@@ -3,16 +3,13 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-using JSSoft.Modelora.Extensions;
-
 namespace JSSoft.Modelora.StaticConverters;
 
-internal sealed class Int64ModelConverter : ModelConverterBase<long>
+internal sealed class Int64ModelConverter : ModelConverter<long>
 {
-    protected override long Read(BinaryReader reader, Type type, ModelOptions options)
-        => reader.ReadZigZagEncodedInt64();
+    protected override long Read(ref ModelReader reader, Type type, ModelOptions options)
+        => reader.ReadInt64();
 
-    protected override void Write(BinaryWriter writer, long value, ModelOptions options)
-        => writer.WriteZigZagEncodedInt64(value);
+    protected override void Write(ref ModelWriter writer, long value, ModelOptions options)
+        => writer.Write(value);
 }

@@ -5,7 +5,6 @@
 
 #pragma warning disable SA1402 // File may only contain a single type
 using System.Diagnostics;
-using System.IO;
 
 namespace JSSoft.Modelora;
 
@@ -15,32 +14,32 @@ public abstract class ModelConverter(Type type) : IModelConverter
 
     bool IModelConverter.CanConvert(Type type) => type == Type;
 
-    object? IModelConverter.Read(BinaryReader reader, Type type, ModelOptions options)
-        => Read(reader, type, options);
+    object? IModelConverter.Read(ref ModelReader reader, Type type, ModelOptions options)
+        => Read(ref reader, type, options);
 
-    void IModelConverter.Write(BinaryWriter writer, object value, ModelOptions options)
-        => Write(writer, value, options);
+    void IModelConverter.Write(ref ModelWriter writer, object value, ModelOptions options)
+        => Write(ref writer, value, options);
 
-    protected abstract object? Read(BinaryReader reader, Type type, ModelOptions options);
+    protected abstract object? Read(ref ModelReader reader, Type type, ModelOptions options);
 
-    protected abstract void Write(BinaryWriter writer, object value, ModelOptions options);
+    protected abstract void Write(ref ModelWriter writer, object value, ModelOptions options);
 }
 
-public abstract class ModelConverterBase<T> : IModelConverter
+public abstract class ModelConverter<T> : IModelConverter
     where T : notnull
 {
     public Type Type { get; } = typeof(T);
 
     public virtual bool CanConvert(Type type) => type == Type;
 
-    object? IModelConverter.Read(BinaryReader reader, Type type, ModelOptions options)
-        => Read(reader, type, options);
+    object? IModelConverter.Read(ref ModelReader reader, Type type, ModelOptions options)
+        => Read(ref reader, type, options);
 
-    void IModelConverter.Write(BinaryWriter writer, object value, ModelOptions options)
+    void IModelConverter.Write(ref ModelWriter writer, object value, ModelOptions options)
     {
         if (value is T t)
         {
-            Write(writer, t, options);
+            Write(ref writer, t, options);
         }
         else
         {
@@ -48,7 +47,7 @@ public abstract class ModelConverterBase<T> : IModelConverter
         }
     }
 
-    protected abstract T? Read(BinaryReader reader, Type type, ModelOptions options);
+    protected abstract T? Read(ref ModelReader reader, Type type, ModelOptions options);
 
-    protected abstract void Write(BinaryWriter writer, T value, ModelOptions options);
+    protected abstract void Write(ref ModelWriter writer, T value, ModelOptions options);
 }
