@@ -3,15 +3,13 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-
 namespace JSSoft.Modelora.StaticConverters;
 
-internal sealed class GuidModelConverter : ModelConverterBase<Guid>
+internal sealed class GuidModelConverter : ModelConverter<Guid>
 {
-    protected override Guid Read(BinaryReader reader, Type type, ModelOptions options)
-        => new(reader.ReadBytes(16));
+    protected override Guid Read(ref ModelReader reader, Type type, ModelOptions options)
+        => reader.ReadGuid();
 
-    protected override void Write(BinaryWriter writer, Guid value, ModelOptions options)
-        => writer.Write(value.ToByteArray());
+    protected override void Write(ref ModelWriter writer, Guid value, ModelOptions options)
+        => writer.Write(value);
 }

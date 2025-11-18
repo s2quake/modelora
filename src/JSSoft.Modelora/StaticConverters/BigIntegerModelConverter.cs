@@ -3,22 +3,13 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-
 namespace JSSoft.Modelora.StaticConverters;
 
-internal sealed class BigIntegerModelConverter : ModelConverterBase<BigInteger>
+internal sealed class BigIntegerModelConverter : ModelConverter<BigInteger>
 {
-    protected override BigInteger Read(BinaryReader reader, Type type, ModelOptions options)
-    {
-        var length = reader.ReadInt32();
-        return new BigInteger(reader.ReadBytes(length));
-    }
+    protected override BigInteger Read(ref ModelReader reader, Type type, ModelOptions options)
+        => reader.ReadBigInteger();
 
-    protected override void Write(BinaryWriter writer, BigInteger value, ModelOptions options)
-    {
-        var bytes = value.ToByteArray();
-        writer.Write(bytes.Length);
-        writer.Write(bytes, 0, bytes.Length);
-    }
+    protected override void Write(ref ModelWriter writer, BigInteger value, ModelOptions options)
+        => writer.Write(value);
 }

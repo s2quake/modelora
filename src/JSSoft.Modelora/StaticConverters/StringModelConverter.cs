@@ -3,15 +3,13 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-
 namespace JSSoft.Modelora.StaticConverters;
 
-internal sealed class StringModelConverter : ModelConverterBase<string>
+internal sealed class StringModelConverter : ModelConverter<string>
 {
-    protected override string? Read(BinaryReader reader, Type type, ModelOptions options)
+    protected override string? Read(ref ModelReader reader, Type type, ModelOptions options)
         => reader.ReadString();
 
-    protected override void Write(BinaryWriter writer, string value, ModelOptions options)
+    protected override void Write(ref ModelWriter writer, string value, ModelOptions options)
         => writer.Write(value);
 }

@@ -4,7 +4,6 @@
 // </copyright>
 
 using System.IO;
-using System.Numerics;
 using JSSoft.Modelora.Extensions;
 
 namespace JSSoft.Modelora.Tests.Extensions;

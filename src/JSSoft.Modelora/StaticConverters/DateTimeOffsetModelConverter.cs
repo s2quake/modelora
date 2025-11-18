@@ -3,16 +3,13 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-using JSSoft.Modelora.Extensions;
-
 namespace JSSoft.Modelora.StaticConverters;
 
-internal sealed class DateTimeOffsetModelConverter : ModelConverterBase<DateTimeOffset>
+internal sealed class DateTimeOffsetModelConverter : ModelConverter<DateTimeOffset>
 {
-    protected override DateTimeOffset Read(BinaryReader reader, Type type, ModelOptions options)
-        => new(reader.ReadZigZagEncodedInt64(), TimeSpan.Zero);
+    protected override DateTimeOffset Read(ref ModelReader reader, Type type, ModelOptions options)
+        => new(reader.ReadInt64(), TimeSpan.Zero);
 
-    protected override void Write(BinaryWriter writer, DateTimeOffset value, ModelOptions options)
-        => writer.WriteZigZagEncodedInt64(value.UtcTicks);
+    protected override void Write(ref ModelWriter writer, DateTimeOffset value, ModelOptions options)
+        => writer.Write(value.UtcTicks);
 }

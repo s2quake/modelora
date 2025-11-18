@@ -3,8 +3,6 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.Runtime.Serialization;
-
 namespace JSSoft.Modelora.Tests;
 
 [ModelScalar("hex_scalar_value", Kind = ModelScalarKind.Hex)]

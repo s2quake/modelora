@@ -3,9 +3,6 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
-
 namespace JSSoft.Modelora.Tests;
 
 public sealed class ModelScalarUtilityTests
