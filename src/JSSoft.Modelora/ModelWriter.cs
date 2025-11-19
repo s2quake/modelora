@@ -18,12 +18,10 @@ public ref struct ModelWriter(IBufferWriter<byte> bufferWriter)
         var underlyingType = Enum.GetUnderlyingType(enumType);
         if (underlyingType == typeof(long))
         {
-            Write((byte)1);
             Write(Convert.ToInt64(value));
         }
         else
         {
-            Write((byte)0);
             Write(Convert.ToInt32(value));
         }
     }

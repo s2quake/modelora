@@ -16,39 +16,26 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
     public object ReadEnum(Type enumType)
     {
         var underlyingType = Enum.GetUnderlyingType(enumType);
-        byte flag = ReadByte();
         if (underlyingType == typeof(long))
         {
-            if (flag == 1)
-            {
-                long value = ReadInt64();
-                return Enum.ToObject(enumType, value);
-            }
+            long value = ReadInt64();
+            return Enum.ToObject(enumType, value);
         }
         else
         {
-            if (flag == 0)
-            {
-                int value = ReadInt32();
-                return Enum.ToObject(enumType, value);
-            }
+            int value = ReadInt32();
+            return Enum.ToObject(enumType, value);
         }
-
-        throw new InvalidDataException();
     }
 
-    public int ReadBytes(Span<byte> buffer)
+    public void ReadBytes(scoped Span<byte> destination)
     {
-        int length = (int)Math.Min(_sequence.Remaining, buffer.Length);
-        if (length == 0)
+        if (!_sequence.TryCopyTo(destination))
         {
-            return 0;
+            throw new EndOfStreamException();
         }
 
-        var span = _sequence.UnreadSpan[..length];
-        span.CopyTo(buffer);
-        _sequence.Advance(length);
-        return length;
+        _sequence.Advance(destination.Length);
     }
 
     public ReadOnlySpan<byte> ReadBytes(int length)
@@ -65,12 +52,11 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
 
     public bool ReadBoolean()
     {
-        if (_sequence.End)
+        if (!_sequence.TryRead(out byte value))
         {
             throw new EndOfStreamException();
         }
 
-        _sequence.TryRead(out byte value);
         return value != 0;
     }
 
@@ -81,12 +67,11 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
         byte b;
         do
         {
-            if (_sequence.End)
+            if (!_sequence.TryRead(out b))
             {
                 throw new EndOfStreamException();
             }
 
-            _sequence.TryRead(out b);
             result |= (b & 0x7Fu) << shift;
             shift += 7;
         }
@@ -110,12 +95,11 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
 
     public byte ReadByte()
     {
-        if (_sequence.End)
+        if (!_sequence.TryRead(out byte value))
         {
             throw new EndOfStreamException();
         }
 
-        _sequence.TryRead(out byte value);
         return value;
     }
 
@@ -126,12 +110,11 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
         byte b;
         do
         {
-            if (_sequence.End)
+            if (!_sequence.TryRead(out b))
             {
                 throw new EndOfStreamException();
             }
 
-            _sequence.TryRead(out b);
             result |= (b & 0x7Fu) << shift;
             shift += 7;
         }
@@ -147,12 +130,11 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
         byte b;
         do
         {
-            if (_sequence.End)
+            if (!_sequence.TryRead(out b))
             {
                 throw new EndOfStreamException();
             }
 
-            _sequence.TryRead(out b);
             result |= (b & 0x7Fu) << shift;
             shift += 7;
         }
@@ -168,12 +150,11 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
         byte b;
         do
         {
-            if (_sequence.End)
+            if (!_sequence.TryRead(out b))
             {
                 throw new EndOfStreamException();
             }
 
-            _sequence.TryRead(out b);
             result |= (ulong)(b & 0x7Fu) << shift;
             shift += 7;
         }
@@ -189,12 +170,11 @@ public ref struct ModelReader(scoped in ReadOnlySequence<byte> sequence)
         byte b;
         do
         {
-            if (_sequence.End)
+            if (!_sequence.TryRead(out b))
             {
                 throw new EndOfStreamException();
             }
 
-            _sequence.TryRead(out b);
             result |= (BigInteger)(b & 0x7Fu) << shift;
             shift += 7;
         }

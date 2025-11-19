@@ -3,9 +3,6 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-using JSSoft.Modelora.Extensions;
-
 namespace JSSoft.Modelora;
 
 internal sealed record class ModelData
@@ -23,23 +20,11 @@ internal sealed record class ModelData
 
     public int Version { get; set; }
 
-    public void Write(BinaryWriter writer)
-    {
-        writer.Write(TypeName);
-        writer.WriteZigZagEncodedInt32(Version);
-    }
-
     public void Write(ref ModelWriter writer)
     {
         writer.Write(TypeName);
         writer.Write(Version);
     }
-
-    public static ModelData GetData(BinaryReader reader) => new()
-    {
-        TypeName = reader.ReadString(),
-        Version = reader.ReadZigZagEncodedInt32(),
-    };
 
     public static ModelData GetData(ref ModelReader reader) => new()
     {

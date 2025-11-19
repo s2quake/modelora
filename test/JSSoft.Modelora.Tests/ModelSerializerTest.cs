@@ -85,10 +85,7 @@ public sealed class HasModelConverterModelConverter(Type type) : ModelConverter(
     {
         var length = sizeof(int);
         var bytes = new byte[length];
-        if (reader.ReadBytes(bytes) != length)
-        {
-            throw new EndOfStreamException("Failed to read the expected number of bytes.");
-        }
+        reader.ReadBytes(bytes);
 
         return new HasModelConverter
         {
