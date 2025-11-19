@@ -81,14 +81,11 @@ public sealed record class NotHasModelConverter
 
 public sealed class HasModelConverterModelConverter(Type type) : ModelConverter(type)
 {
-    protected override object Read(BinaryReader reader, Type type, ModelOptions options)
+    protected override object Read(ref ModelReader reader, Type type, ModelOptions options)
     {
         var length = sizeof(int);
-        Span<byte> bytes = stackalloc byte[length];
-        if (reader.Read(bytes) != length)
-        {
-            throw new EndOfStreamException("Failed to read the expected number of bytes.");
-        }
+        var bytes = new byte[length];
+        reader.ReadBytes(bytes);
 
         return new HasModelConverter
         {
@@ -96,7 +93,7 @@ public sealed class HasModelConverterModelConverter(Type type) : ModelConverter(
         };
     }
 
-    protected override void Write(BinaryWriter writer, object value, ModelOptions options)
+    protected override void Write(ref ModelWriter writer, object value, ModelOptions options)
     {
         if (value is HasModelConverter instance)
         {

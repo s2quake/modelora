@@ -4,11 +4,10 @@
 // </copyright>
 
 using System.Collections;
-using System.IO;
 
 namespace JSSoft.Modelora.DynamicConverters;
 
-internal abstract class CollectionModelConverter : ModelConverterBase<IEnumerable>, IModelComparer
+internal abstract class CollectionModelConverter : ModelConverter<IEnumerable>, IModelComparer
 {
     protected abstract Type GenericTypeDefinition { get; }
 
@@ -79,7 +78,7 @@ internal abstract class CollectionModelConverter : ModelConverterBase<IEnumerabl
         return hash.ToHashCode();
     }
 
-    protected sealed override IEnumerable Read(BinaryReader reader, Type type, ModelOptions options)
+    protected sealed override IEnumerable Read(ref ModelReader reader, Type type, ModelOptions options)
     {
         var elementType = GetElementType(type);
         var length = reader.ReadInt32();
@@ -87,33 +86,27 @@ internal abstract class CollectionModelConverter : ModelConverterBase<IEnumerabl
         using var _ = ModelTypeScope.Push(elementType);
         for (var i = 0; i < length; i++)
         {
-            var value = ModelSerializer.Deserialize(reader, elementType, options);
+            var value = ModelSerializer.Deserialize(ref reader, elementType, options);
             listInstance.Add(value);
         }
 
         return CreateInstance(type, elementType, listInstance);
     }
 
-    protected sealed override void Write(BinaryWriter writer, IEnumerable value, ModelOptions options)
+    protected sealed override void Write(ref ModelWriter writer, IEnumerable value, ModelOptions options)
     {
-        var enumerator = value.GetEnumerator();
         var elementType = GetElementType(value.GetType());
-        var position = writer.BaseStream.Position;
-        var length = 0;
+        var length = GetCount(value);
+
         writer.Write(length);
         using var _ = ModelTypeScope.Push(elementType);
+        var enumerator = value.GetEnumerator();
         while (enumerator.MoveNext())
         {
             var current = enumerator.Current;
             var currentType = TypeUtility.GetActualType(current, elementType);
-            ModelSerializer.Serialize(writer, current, currentType, options);
-            length++;
+            ModelSerializer.Serialize(ref writer, current, currentType, options);
         }
-
-        var currentPosition = writer.BaseStream.Position;
-        writer.BaseStream.Position = position;
-        writer.Write(length);
-        writer.BaseStream.Position = currentPosition;
     }
 
     protected virtual IEnumerable CreateInstance(Type type, Type elementType, IList listInstance)
@@ -138,5 +131,22 @@ internal abstract class CollectionModelConverter : ModelConverterBase<IEnumerabl
     {
         var listType = typeof(List<>).MakeGenericType(elementType);
         return (IList)TypeUtility.CreateInstance(listType, args: [])!;
+    }
+
+    private static int GetCount(IEnumerable enumerable)
+    {
+        if (enumerable is ICollection collection)
+        {
+            return collection.Count;
+        }
+
+        var count = 0;
+        var enumerator = enumerable.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            count++;
+        }
+
+        return count;
     }
 }

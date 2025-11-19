@@ -3,11 +3,9 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-
 namespace JSSoft.Modelora.DynamicConverters;
 
-internal sealed class KeyValuePairModelConverter : ModelConverterBase<object>, IModelComparer
+internal sealed class KeyValuePairModelConverter : ModelConverter<object>, IModelComparer
 {
     private static readonly string[] _names =
     [
@@ -46,7 +44,7 @@ internal sealed class KeyValuePairModelConverter : ModelConverterBase<object>, I
         return hash.ToHashCode();
     }
 
-    protected override object? Read(BinaryReader reader, Type type, ModelOptions options)
+    protected override object? Read(ref ModelReader reader, Type type, ModelOptions options)
     {
         var values = new object?[_names.Length];
         for (var i = 0; i < _names.Length; i++)
@@ -54,13 +52,13 @@ internal sealed class KeyValuePairModelConverter : ModelConverterBase<object>, I
             var property = type.GetProperty(_names[i])!;
             var propertyType = property.PropertyType;
             using var _ = ModelTypeScope.Push(propertyType);
-            values[i] = ModelSerializer.Deserialize(reader, propertyType, options);
+            values[i] = ModelSerializer.Deserialize(ref reader, propertyType, options);
         }
 
         return TypeUtility.CreateInstance(type, args: values);
     }
 
-    protected override void Write(BinaryWriter writer, object value, ModelOptions options)
+    protected override void Write(ref ModelWriter writer, object value, ModelOptions options)
     {
         var type = value.GetType();
         for (var i = 0; i < _names.Length; i++)
@@ -70,7 +68,7 @@ internal sealed class KeyValuePairModelConverter : ModelConverterBase<object>, I
             var propertyValue = property.GetValue(value);
             var propertyActualType = TypeUtility.GetActualType(propertyValue, propertyType);
             using var _ = ModelTypeScope.Push(propertyType);
-            ModelSerializer.Serialize(writer, propertyValue, propertyActualType, options);
+            ModelSerializer.Serialize(ref writer, propertyValue, propertyActualType, options);
         }
     }
 

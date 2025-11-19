@@ -3,12 +3,11 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace JSSoft.Modelora.DynamicConverters;
 
-internal sealed class TupleModelConverter : ModelConverterBase<object>, IModelComparer
+internal sealed class TupleModelConverter : ModelConverter<object>, IModelComparer
 {
     public override bool CanConvert(Type type) => IsTuple(type) || IsValueTupleType(type);
 
@@ -53,7 +52,7 @@ internal sealed class TupleModelConverter : ModelConverterBase<object>, IModelCo
         return hash.ToHashCode();
     }
 
-    protected override object? Read(BinaryReader reader, Type type, ModelOptions options)
+    protected override object? Read(ref ModelReader reader, Type type, ModelOptions options)
     {
         var genericArguments = type.GetGenericArguments();
         var values = new object?[genericArguments.Length];
@@ -61,13 +60,13 @@ internal sealed class TupleModelConverter : ModelConverterBase<object>, IModelCo
         {
             var itemType = genericArguments[i];
             using var _ = ModelTypeScope.Push(itemType);
-            values[i] = ModelSerializer.Deserialize(reader, itemType, options);
+            values[i] = ModelSerializer.Deserialize(ref reader, itemType, options);
         }
 
         return TypeUtility.CreateInstance(type, args: values);
     }
 
-    protected override void Write(BinaryWriter writer, object value, ModelOptions options)
+    protected override void Write(ref ModelWriter writer, object value, ModelOptions options)
     {
         var type = value.GetType();
         var genericArguments = type.GetGenericArguments();
@@ -90,7 +89,7 @@ internal sealed class TupleModelConverter : ModelConverterBase<object>, IModelCo
             var item = tuple[i];
             var itemActualType = TypeUtility.GetActualType(item, itemType);
             using var _ = ModelTypeScope.Push(itemType);
-            ModelSerializer.Serialize(writer, item, itemActualType, options);
+            ModelSerializer.Serialize(ref writer, item, itemActualType, options);
         }
     }
 

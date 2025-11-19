@@ -3,16 +3,13 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
-using JSSoft.Modelora.Extensions;
-
 namespace JSSoft.Modelora.StaticConverters;
 
-internal sealed class TimeSpanModelConverter : ModelConverterBase<TimeSpan>
+internal sealed class TimeSpanModelConverter : ModelConverter<TimeSpan>
 {
-    protected override TimeSpan Read(BinaryReader reader, Type type, ModelOptions options)
-        => new(reader.ReadZigZagEncodedInt64());
+    protected override TimeSpan Read(ref ModelReader reader, Type type, ModelOptions options)
+        => new(reader.ReadInt64());
 
-    protected override void Write(BinaryWriter writer, TimeSpan value, ModelOptions options)
-        => writer.WriteZigZagEncodedInt64(value.Ticks);
+    protected override void Write(ref ModelWriter writer, TimeSpan value, ModelOptions options)
+        => writer.Write(value.Ticks);
 }

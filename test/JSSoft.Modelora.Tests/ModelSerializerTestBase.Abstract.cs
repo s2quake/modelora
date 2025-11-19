@@ -51,6 +51,16 @@ public abstract partial class ModelSerializerTestBase<TData>
         var expectedObject = new RecordClassWithAbstractPropertyNotModel2();
         Assert.Throws<InvalidModelException>(() => Serialize(expectedObject));
     }
+
+    [Fact]
+    public void InvalidDerivedRecordClass_Throw_Test()
+    {
+        var expectedObject = new InvalidDerivedRecordClass();
+        var message = "Type 'JSSoft.Modelora.Tests.InvalidDerivedRecordClass' is not supported or not registered " +
+                      "in known types.";
+        var e = Assert.Throws<InvalidModelException>(() => Serialize(expectedObject));
+        Assert.Equal(message, e.Message);
+    }
 }
 
 [Model("JSSoft_Modelora_Tests_ModelSerializerTest_RecordClassWithAbstractProperty", Version = 1)]
@@ -99,4 +109,8 @@ public sealed partial record class RecordClassWithAbstractPropertyNotModel2
     [Property(0)]
     [NotEmpty]
     public ImmutableArray<AbstractRecordClassNotModel> DerivedList { get; init; } = [];
+}
+
+public sealed record class InvalidDerivedRecordClass : AbstractRecordClass
+{
 }

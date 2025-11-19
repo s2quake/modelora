@@ -3,12 +3,11 @@
 //   Licensed under the MIT License. See LICENSE.md in the project root for license information.
 // </copyright>
 
-using System.IO;
 using System.Reflection;
 
 namespace JSSoft.Modelora.DynamicConverters;
 
-internal sealed class ModelObjectModelConverter : ModelConverterBase<object>, IModelComparer
+internal sealed class ModelObjectModelConverter : ModelConverter<object>, IModelComparer
 {
     public override bool CanConvert(Type type)
         => type.IsDefined(typeof(ModelAttribute)) || type.IsDefined(typeof(OriginModelAttribute));
@@ -42,7 +41,7 @@ internal sealed class ModelObjectModelConverter : ModelConverterBase<object>, IM
         return hash.ToHashCode();
     }
 
-    protected override object? Read(BinaryReader reader, Type type, ModelOptions options)
+    protected override object? Read(ref ModelReader reader, Type type, ModelOptions options)
     {
         var obj = TypeUtility.CreateInstance(type);
         var properties = ModelResolver.GetProperties(type);
@@ -51,7 +50,7 @@ internal sealed class ModelObjectModelConverter : ModelConverterBase<object>, IM
             var property = properties[i];
             var propertyType = property.PropertyType;
             using var _ = ModelTypeScope.Push(property.PropertyType);
-            var propertyValue = ModelSerializer.Deserialize(reader, propertyType, options);
+            var propertyValue = ModelSerializer.Deserialize(ref reader, propertyType, options);
             SetPropertyValue(property, obj, propertyValue);
         }
 
@@ -77,7 +76,7 @@ internal sealed class ModelObjectModelConverter : ModelConverterBase<object>, IM
         return obj;
     }
 
-    protected override void Write(BinaryWriter writer, object value, ModelOptions options)
+    protected override void Write(ref ModelWriter writer, object value, ModelOptions options)
     {
         var type = value.GetType();
         if (options.IsValidationEnabled && !TypeUtility.IsDefault(value))
@@ -101,7 +100,7 @@ internal sealed class ModelObjectModelConverter : ModelConverterBase<object>, IM
             var propertyValue = GetPropertyValue(property, value, options);
             var propertyActualType = TypeUtility.GetActualType(propertyValue, propertyType);
             using var _ = ModelTypeScope.Push(propertyType, emitDefaultValue: property.EmitDefaultValue);
-            ModelSerializer.Serialize(writer, propertyValue, propertyActualType, options);
+            ModelSerializer.Serialize(ref writer, propertyValue, propertyActualType, options);
         }
     }
 
